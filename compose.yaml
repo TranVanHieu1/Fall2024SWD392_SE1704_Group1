@@ -1,0 +1,21 @@
+
+version: '3.9'
+
+services:
+  db:
+    image: rapidfort/microsoft-sql-server-2019-ib:latest # Sử dụng image của SQL Server
+    container_name: sqlserver                           # Tên container cho SQL Server
+    restart: always
+    environment:
+      - ACCEPT_EULA=Y                                   # Chấp nhận điều khoản sử dụng
+      - SA_PASSWORD=12345                 # Mật khẩu cho tài khoản 'sa'
+      - MSSQL_PID=Express                               # Chỉ định phiên bản SQL Server Express
+    expose:
+      - "1433"                                          # Cổng mặc định của SQL Server
+    ports:
+      - "1433:1433"                                     # Mở cổng 1433 cho bên ngoài truy cập
+    networks:
+      - default
+
+networks:
+  default:
