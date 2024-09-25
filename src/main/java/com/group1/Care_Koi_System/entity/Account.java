@@ -49,5 +49,5 @@ public class Account {
 
     @OneToMany(mappedBy = "account")
     @Transient
-    private List<Pond> ponds;
+    private List<Ponds> ponds;
 }

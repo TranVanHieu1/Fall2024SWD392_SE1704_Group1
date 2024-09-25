@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 
@@ -15,10 +16,6 @@ public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
-    @ManyToOne
-    @JoinColumn(name = "order_id")
-    private Order order;
 
     @Column(name = "item_name")
     private String itemName;
@@ -45,4 +42,8 @@ public class Item {
 
     @Column
     private boolean isDelete;
+
+    @OneToMany(mappedBy = "item")
+    @Transient
+    private List<OrderDetail> orderDetails;
 }

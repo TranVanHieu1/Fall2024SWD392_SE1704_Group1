@@ -18,7 +18,7 @@ public class WaterParameter {
 
     @ManyToOne
     @JoinColumn(name = "pond_id")
-    private Pond pond;
+    private Ponds pond;
 
     @Column
     private LocalDateTime checkDate;

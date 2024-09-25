@@ -1,9 +1,9 @@
 
-version: '3.9'
+version: '4.34.2'
 
 services:
   db:
-    image: rapidfort/microsoft-sql-server-2019-ib:latest # Sử dụng image của SQL Server
+    image: care-koi-system # Sử dụng image
     container_name: sqlserver                           # Tên container cho SQL Server
     restart: always
     environment:
