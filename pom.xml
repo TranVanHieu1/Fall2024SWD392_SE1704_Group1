@@ -191,6 +191,16 @@
 					</excludes>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>io.github.deweyjose</groupId>
+				<artifactId>graphqlcodegen-maven-plugin</artifactId>
+				<version>1.61.5</version>
+				<configuration>
+					<schemaPaths>
+						<schemaPath>${project.basedir}/src/main/resources/graphql-client</schemaPath>
+					</schemaPaths>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
