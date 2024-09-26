@@ -2,7 +2,7 @@
 FROM maven:3-openjdk-17 AS build
 WORKDIR /app
 
-# Sao chép toàn bộ mã nguồn vào container
+# Sao chép toàn bộ mã nguồn vào container/////////////
 COPY . .
 
 # Build ứng dụng, tạo file JAR
@@ -19,4 +19,4 @@ COPY --from=build /app/target/Care_Koi_System-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8080
 
 # Chạy ứng dụng
-ENTRYPOINT ["java", "-jar", "Care_Koi_System-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
