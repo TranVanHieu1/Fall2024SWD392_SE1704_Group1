@@ -17,7 +17,7 @@ public class Feeding {
 
     @ManyToOne
     @JoinColumn(name = "pond_id")
-    private Pond pond;
+    private Ponds pond;
 
     @Column(name = "food_type")
     @Enumerated(EnumType.STRING)

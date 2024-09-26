@@ -36,7 +36,7 @@ public class Order {
 
     @OneToMany(mappedBy = "order")
     @Transient
-    private List<Item> itemList;
+    private List<OrderDetail> orderDetails;
 
     @OneToOne(mappedBy = "order")
     @Transient

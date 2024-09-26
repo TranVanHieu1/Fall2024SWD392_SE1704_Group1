@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Builder
@@ -19,13 +20,9 @@ public class KoiFish {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToMany
-    @JoinTable(
-            name = "Pond", // Tên bảng liên kết
-            joinColumns = @JoinColumn(name = "koi_fish_id"), // Khóa chính của KoiFish
-            inverseJoinColumns = @JoinColumn(name = "pond_id") // Khóa chính của Pond
-    )
-    private List<Pond> ponds;
+//    @ManyToOne
+//    @JoinColumn(name = "pond_id")
+//    private Ponds ponds;
 
     @Column
     private String fishName;
@@ -62,4 +59,10 @@ public class KoiFish {
 
     @Column
     private String note;
+
+    @OneToMany(mappedBy = "koiFish", cascade = CascadeType.ALL)
+    private List<Pond_KoiFish> pondKoiFish;
+
+
+
 }
