@@ -1,17 +1,28 @@
 package com.group1.Care_Koi_System.entity;
 
+import com.group1.Care_Koi_System.entity.Enum.AccountProviderEnum;
 import com.group1.Care_Koi_System.entity.Enum.AccountRole;
 import com.group1.Care_Koi_System.entity.Enum.AccountStatus;
+import com.group1.Care_Koi_System.entity.Enum.GenderEnum;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Builder
 @Entity
-
-public class Account {
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class Account implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,6 +43,13 @@ public class Account {
     @Column
     private String email;
 
+    @Column
+    private GenderEnum gender;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private AccountProviderEnum provider;
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private AccountRole role;
@@ -50,4 +68,56 @@ public class Account {
     @OneToMany(mappedBy = "account")
     @Transient
     private List<Ponds> ponds;
+
+    @Transient
+    private String refreshToken;
+
+    @Transient
+    private String tokens;
+
+    @Transient
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        Set<SimpleGrantedAuthority> authorities = new HashSet<>();
+        authorities.add(new SimpleGrantedAuthority(this.role.name()));
+        return authorities;
+    }
+
+    @Transient
+    @Override
+    public String getPassword() {
+        return "";
+    }
+
+    @Transient
+    @Override
+    public String getUsername() {
+        return "";
+    }
+
+    @Transient
+    @Override
+    public boolean isAccountNonExpired() {
+        return UserDetails.super.isAccountNonExpired();
+    }
+
+    @Transient
+    @Override
+    public boolean isAccountNonLocked() {
+        return UserDetails.super.isAccountNonLocked();
+    }
+
+    @Transient
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return UserDetails.super.isCredentialsNonExpired();
+    }
+
+    @Transient
+    @Override
+    public boolean isEnabled() {
+        return UserDetails.super.isEnabled();
+    }
+
+
 }
