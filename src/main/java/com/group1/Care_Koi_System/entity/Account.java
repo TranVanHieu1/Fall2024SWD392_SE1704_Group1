@@ -31,7 +31,7 @@ public class Account implements UserDetails {
     @Column
     private String userName;
 
-    @Column
+    @Column(nullable = false)
     private String passWord;
 
     @Column
@@ -86,13 +86,13 @@ public class Account implements UserDetails {
     @Transient
     @Override
     public String getPassword() {
-        return "";
+        return this.passWord;
     }
 
     @Transient
     @Override
     public String getUsername() {
-        return "";
+        return this.email;
     }
 
     @Transient

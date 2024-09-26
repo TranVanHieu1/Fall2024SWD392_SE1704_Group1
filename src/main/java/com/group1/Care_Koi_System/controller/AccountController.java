@@ -6,6 +6,7 @@ import com.group1.Care_Koi_System.dto.Account.LoginResponse;
 import com.group1.Care_Koi_System.dto.Account.RegisReponse;
 import com.group1.Care_Koi_System.dto.Account.RegisterRequest;
 import com.group1.Care_Koi_System.service.AccountService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +25,7 @@ public class AccountController {
     }
 
     @PostMapping("/register")
-    public RegisReponse registerAccount(@RequestBody RegisterRequest registerRequest){
+    public RegisReponse registerAccount(@RequestBody @Valid RegisterRequest registerRequest){
         return  accountService.registerAccount(registerRequest);
 
     }

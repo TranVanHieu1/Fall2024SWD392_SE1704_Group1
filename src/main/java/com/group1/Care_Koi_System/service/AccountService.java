@@ -76,13 +76,13 @@ public class AccountService implements UserDetailsService {
             account.setStatus(AccountStatus.VERIFIED);
             account.setCreateAt(LocalDateTime.now());
             account.setProvider(AccountProviderEnum.LOCAL);
-            account.setUserName("Hiếu");
             accountRepository.save(account);
             String token = jwtService.generateToken(account.getEmail());
             account.setTokens(token);
             return new RegisReponse("Registered successfully!");
-        }catch (Exception ex){
-            throw new RuntimeException("Can not register.");
+        }catch (AuthAppException ex){
+            ErrorCode errorCode = ex.getErrorCode();
+            throw new AccountException(errorCode);
         }
 
     }
