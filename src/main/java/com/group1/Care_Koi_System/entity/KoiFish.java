@@ -20,10 +20,6 @@ public class KoiFish {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-//    @ManyToOne
-//    @JoinColumn(name = "pond_id")
-//    private Ponds ponds;
-
     @Column
     private String fishName;
 
@@ -59,6 +55,9 @@ public class KoiFish {
 
     @Column
     private String note;
+
+    @Column
+    private boolean isDeleted;
 
     @OneToMany(mappedBy = "koiFish", cascade = CascadeType.ALL)
     private List<Pond_KoiFish> pondKoiFish;

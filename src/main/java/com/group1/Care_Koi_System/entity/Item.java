@@ -41,7 +41,7 @@ public class Item {
     private LocalDateTime updateAt;
 
     @Column
-    private boolean isDelete;
+    private boolean isDeleted;
 
     @OneToMany(mappedBy = "item")
     @Transient

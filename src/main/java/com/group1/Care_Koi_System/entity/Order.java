@@ -32,7 +32,7 @@ public class Order {
     private String note;
 
     @Column
-    private boolean isDelete;
+    private boolean isDeleted;
 
     @OneToMany(mappedBy = "order")
     @Transient

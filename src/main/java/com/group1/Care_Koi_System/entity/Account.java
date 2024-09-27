@@ -61,6 +61,9 @@ public class Account implements UserDetails {
     @Enumerated(EnumType.STRING)
     private AccountStatus status;
 
+    @Column
+    private boolean isDeleted;
+
     @OneToMany(mappedBy = "account")
     @Transient
     private List<Order> orders;

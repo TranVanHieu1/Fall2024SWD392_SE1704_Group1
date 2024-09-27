@@ -32,22 +32,12 @@ public class Ponds {
     @Column
     private double volume;
 
+    @Column
+    private boolean isDeleted;
+
     @OneToMany(mappedBy = "pond")
     @Transient
     private List<Feeding> feedingLis;
-
-//    @OneToMany(mappedBy = "pond", cascade = CascadeType.ALL)
-//    @JsonIgnore
-//    @Transient
-//    private List<Pond_KoiFish> pondKoiFishs;
-
-//    @ManyToMany
-//    @JoinTable(
-//    name = "pond_koifish",
-//    joinColumns = @JoinColumn(name = "pond_id"),
-//    inverseJoinColumns = @JoinColumn(name = "koifish_id")
-//    )
-//    private List<KoiFish> koiFishList = new ArrayList<>();
 
     @OneToMany(mappedBy = "ponds", cascade = CascadeType.ALL)
     @Transient
