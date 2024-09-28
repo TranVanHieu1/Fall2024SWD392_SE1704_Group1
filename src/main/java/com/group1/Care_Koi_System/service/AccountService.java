@@ -76,6 +76,7 @@ public class AccountService implements UserDetailsService {
             account.setStatus(AccountStatus.VERIFIED);
             account.setCreateAt(LocalDateTime.now());
             account.setProvider(AccountProviderEnum.LOCAL);
+            account.setDeleted(false);
             accountRepository.save(account);
             String token = jwtService.generateToken(account.getEmail());
             account.setTokens(token);

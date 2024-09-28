@@ -95,7 +95,7 @@ public class Account implements UserDetails {
     @Transient
     @Override
     public String getUsername() {
-        return this.email;
+        return this.userName;
     }
 
     @Transient
