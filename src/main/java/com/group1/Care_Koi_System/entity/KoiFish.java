@@ -14,6 +14,10 @@ import java.util.List;
 @Builder
 
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class KoiFish {
 
     @Id

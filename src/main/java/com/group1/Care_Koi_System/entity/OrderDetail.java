@@ -1,10 +1,14 @@
 package com.group1.Care_Koi_System.entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
+import lombok.*;
 
 @Builder
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class OrderDetail {
 
     @Id

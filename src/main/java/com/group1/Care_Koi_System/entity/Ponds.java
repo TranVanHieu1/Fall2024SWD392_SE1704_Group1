@@ -4,11 +4,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Builder
-
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 @Entity
 public class Ponds {
 
@@ -47,4 +51,6 @@ public class Ponds {
     @Transient
     private List<WaterParameter> parameters;
 
+    @Column(nullable = false)
+    private LocalDateTime createAt;
 }

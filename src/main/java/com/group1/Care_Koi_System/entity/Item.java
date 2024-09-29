@@ -11,6 +11,10 @@ import java.util.List;
 @Builder
 
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class Item {
 
     @Id

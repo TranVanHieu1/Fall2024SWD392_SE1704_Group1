@@ -1,5 +1,9 @@
 package com.group1.Care_Koi_System.exceptionhandler;
 
+
+import lombok.Getter;
+
+@Getter
 public class AuthAppException extends RuntimeException{
     private ErrorCode errorCode;
 

@@ -2,12 +2,16 @@ package com.group1.Care_Koi_System.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Builder;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Builder
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class Pond_KoiFish {
 
     @Id
