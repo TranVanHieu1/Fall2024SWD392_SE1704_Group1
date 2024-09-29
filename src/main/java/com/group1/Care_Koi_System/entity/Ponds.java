@@ -51,6 +51,6 @@ public class Ponds {
     @Transient
     private List<WaterParameter> parameters;
 
-    @Column(nullable = false)
+    @Column
     private LocalDateTime createAt;
 }
