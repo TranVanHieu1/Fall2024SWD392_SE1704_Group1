@@ -86,7 +86,10 @@ public enum ErrorCode {
     // QUIZ | Code 71XX
 
 
-    ;
+    POND_ALREADY_EXISTS(7004,"The pond already exists." , HttpStatus.CONFLICT),
+
+    INVALID_POND_NAME(7005,"Invalid Name Pond",HttpStatus.NOT_FOUND);
+
     @Getter
     private final Integer code;
     @Setter
