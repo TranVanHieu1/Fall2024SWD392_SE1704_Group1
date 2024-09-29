@@ -12,7 +12,8 @@ public class CORSConfig implements WebMvcConfigurer {
                 .allowedOrigins(
                         "http://localhost:5173",
                         "http://localhost:8080",
-                        "http://localhost:8000")
+                        "http://localhost:8000",
+                        "https://fall2024swd392-se1704-group1.onrender.com")
                 .allowedHeaders("*")
                 .exposedHeaders("Access-Control-Allow-Origin", "Access-Control-Allow-Methods","Access-Control-Allow-Headers")
                 .allowedMethods("*")
