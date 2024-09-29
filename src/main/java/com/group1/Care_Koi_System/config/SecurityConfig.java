@@ -50,14 +50,16 @@ public class SecurityConfig
                 .authorizeHttpRequests(
                         req -> req
 //                                .requestMatchers("/api/admin/**").hasAnyRole("ADMIN")
-                                .requestMatchers("/**")
-                                .permitAll()
-                                .anyRequest()
-                                .authenticated()
+//                                .requestMatchers("/**")
+//                                .permitAll()
+//                                .anyRequest()
+//                                .authenticated()
+
+                                .requestMatchers("/**").permitAll()
                 )
 //                .oauth2Login(Customizer.withDefaults())
-                .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
-                .logout(LogoutConfigurer::permitAll)
+                .formLogin(formLogin ->formLogin.disable())
+                .httpBasic(httpBasic ->httpBasic.disable())
                 .exceptionHandling(eh -> eh.accessDeniedPage("/403"))
                 .userDetailsService(accountService)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
