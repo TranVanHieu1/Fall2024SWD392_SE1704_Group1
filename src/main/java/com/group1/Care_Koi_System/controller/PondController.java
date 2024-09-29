@@ -30,7 +30,6 @@ public class PondController {
     }
 
 
-    @PreAuthorize("isAuthenticated()")
     @PostMapping("/create-pond")
     public ResponseEntity<ApiRes<PondResponse>> createPond(@Valid @RequestBody PondRequest request) {
 
