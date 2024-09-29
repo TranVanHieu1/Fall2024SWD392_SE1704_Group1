@@ -31,7 +31,7 @@ public class PondController {
 
 
     @PreAuthorize("isAuthenticated()")
-    @PostMapping("/create")
+    @PostMapping("/create-pond")
     public ResponseEntity<ApiRes<PondResponse>> createPond(@Valid @RequestBody PondRequest request) {
 
         Account account = accountUtils.getCurrentAccount();
