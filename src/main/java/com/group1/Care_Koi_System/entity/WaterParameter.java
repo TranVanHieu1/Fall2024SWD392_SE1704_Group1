@@ -36,4 +36,7 @@ public class WaterParameter {
     @Column
     @Enumerated(EnumType.STRING)
     private WaterParameterEnum parameter;
+
+    @Column
+    private boolean isDeleted;
 }
