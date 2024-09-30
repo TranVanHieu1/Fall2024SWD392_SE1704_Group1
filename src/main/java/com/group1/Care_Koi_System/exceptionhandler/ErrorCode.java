@@ -88,7 +88,9 @@ public enum ErrorCode {
 
     POND_ALREADY_EXISTS(7004,"The pond already exists." , HttpStatus.CONFLICT),
 
-    INVALID_POND_NAME(7005,"Invalid Name Pond",HttpStatus.NOT_FOUND);
+    INVALID_POND_NAME(7005,"Invalid Name Pond",HttpStatus.NOT_FOUND),
+
+    POND_NOT_FOUND(7006,"Pond Not Found!" , HttpStatus.NOT_FOUND);
 
     @Getter
     private final Integer code;
