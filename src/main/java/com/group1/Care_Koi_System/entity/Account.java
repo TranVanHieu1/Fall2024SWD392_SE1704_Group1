@@ -61,7 +61,7 @@ public class Account implements UserDetails {
     @Enumerated(EnumType.STRING)
     private AccountStatus status;
 
-    @Column
+    @Column(nullable = false)
     private boolean isDeleted;
 
     @OneToMany(mappedBy = "account")
