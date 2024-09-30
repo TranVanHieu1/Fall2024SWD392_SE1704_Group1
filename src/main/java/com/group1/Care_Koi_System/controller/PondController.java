@@ -12,7 +12,6 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,7 +21,6 @@ public class PondController {
 
     private final PondService pondService;
     private final AccountUtils accountUtils;
-
     @Autowired
     public PondController(PondService pondService, AccountUtils accountUtils) {
         this.pondService = pondService;
@@ -41,5 +39,18 @@ public class PondController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(apiRes);
     }
+
+    @PutMapping("update/{pondId}")
+    public ResponseEntity<ApiRes<PondResponse>> updatePond(@PathVariable int pondId, @RequestBody PondRequest request) {
+
+        int accountId = accountUtils.getCurrentAccount().getId();
+        Ponds updatedPond = pondService.updatePond(pondId, request, accountId);
+
+        ApiRes<PondResponse> apiRes = new ApiRes<>();
+        apiRes.setMessage("Update Successfully!");
+
+        return ResponseEntity.ok(apiRes);
+    }
+
 }
 
