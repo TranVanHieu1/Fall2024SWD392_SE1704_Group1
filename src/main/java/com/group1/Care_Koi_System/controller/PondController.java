@@ -19,17 +19,14 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/ponds")
 public class PondController {
 
-    private final PondService pondService;
-    private final AccountUtils accountUtils;
     @Autowired
-    public PondController(PondService pondService, AccountUtils accountUtils) {
-        this.pondService = pondService;
-        this.accountUtils = accountUtils;
-    }
+    private  PondService pondService;
+    @Autowired
+    private  AccountUtils accountUtils;
 
 
     @PostMapping("/create-pond")
-    public ResponseEntity<ApiRes<PondResponse>> createPond(@Valid @RequestBody PondRequest request) {
+    public ResponseEntity<ApiRes<PondResponse>> createPond(@RequestBody PondRequest request) {
 
         Account account = accountUtils.getCurrentAccount();
         Ponds pond = pondService.createPond(request, account.getId());
