@@ -15,16 +15,15 @@ import java.time.LocalDateTime;
 @Service
 public class PondService {
 
-    private final PondRepository pondRepository;
-    private final AccountService accountService;
-    private final AccountUtils accountUtils;
+    @Autowired
+    private PondRepository pondRepository;
 
     @Autowired
-    public PondService(PondRepository pondRepository, AccountService accountService, AccountUtils accountUtils) {
-        this.pondRepository = pondRepository;
-        this.accountService = accountService;
-        this.accountUtils = accountUtils;
-    }
+    private AccountService accountService;
+
+    @Autowired
+    private  AccountUtils accountUtils;
+
 
     public Ponds createPond(PondRequest request, int accountId) {
 
