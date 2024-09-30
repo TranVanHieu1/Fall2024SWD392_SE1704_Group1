@@ -1,10 +1,10 @@
 package com.group1.Care_Koi_System.config;
+
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import org.springframework.context.annotation.Configuration;
-
 
 @Configuration
 @OpenAPIDefinition(info = @Info(title = "Care-koi", version = "v1"))
@@ -14,6 +14,6 @@ import org.springframework.context.annotation.Configuration;
         bearerFormat = "JWT",
         scheme = "bearer"
 )
-public class OpenApiConfig {
+public class OpenApi30Config {
 
 }

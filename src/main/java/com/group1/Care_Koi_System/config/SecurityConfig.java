@@ -49,15 +49,8 @@ public class SecurityConfig
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
                         req -> req
-//                                .requestMatchers("/api/admin/**").hasAnyRole("ADMIN")
-//                                .requestMatchers("/**")
-//                                .permitAll()
-//                                .anyRequest()
-//                                .authenticated()
-
                                 .requestMatchers("/**").permitAll()
                 )
-//                .oauth2Login(Customizer.withDefaults())
                 .formLogin(formLogin ->formLogin.disable())
                 .httpBasic(httpBasic ->httpBasic.disable())
                 .exceptionHandling(eh -> eh.accessDeniedPage("/403"))
