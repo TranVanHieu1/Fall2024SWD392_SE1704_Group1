@@ -50,9 +50,6 @@ public class KoiFish {
     @Enumerated(EnumType.STRING)
     private KoiOrigin origin;
 
-    @Column(name = "date_added")
-    private LocalDateTime dateAdded;
-
     @Column
     @Enumerated(EnumType.STRING)
     private HealthyStatus healthyStatus;
