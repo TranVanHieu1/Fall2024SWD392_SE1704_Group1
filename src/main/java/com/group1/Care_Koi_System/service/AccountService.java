@@ -82,8 +82,7 @@ public class AccountService implements UserDetailsService {
             account.setTokens(token);
             return new RegisReponse("Registered successfully!");
         }catch (AuthAppException ex){
-            ErrorCode errorCode = ex.getErrorCode();
-            throw new AccountException(errorCode);
+            throw new AccountException(ex.getErrorCode());
         }
 
     }

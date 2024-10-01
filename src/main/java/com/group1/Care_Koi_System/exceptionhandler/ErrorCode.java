@@ -85,12 +85,13 @@ public enum ErrorCode {
 
     // QUIZ | Code 71XX
 
-
+    //Pond
     POND_ALREADY_EXISTS(7004,"The pond already exists." , HttpStatus.CONFLICT),
-
     INVALID_POND_NAME(7005,"Invalid Name Pond",HttpStatus.NOT_FOUND),
+    POND_NOT_FOUND(7006,"Pond Not Found!" , HttpStatus.NOT_FOUND),
 
-    POND_NOT_FOUND(7006,"Pond Not Found!" , HttpStatus.NOT_FOUND);
+    //Fish
+    CAN_NOT_SAVE(400, "Can not save fish!", HttpStatus.BAD_REQUEST);
 
     @Getter
     private final Integer code;
