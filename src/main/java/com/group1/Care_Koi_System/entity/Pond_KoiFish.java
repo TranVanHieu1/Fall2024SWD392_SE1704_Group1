@@ -28,9 +28,9 @@ public class Pond_KoiFish {
     @JoinColumn(name = "koi_fish_id")
     private KoiFish koiFish;
 
-    @Column
-    private LocalDateTime added_date;
+    @Column(name = "date_added")
+    private LocalDateTime dateAdded;
 
-    @Column
-    private LocalDateTime end_date;
+    @Column(name ="end_date")
+    private LocalDateTime endDate;
 }
