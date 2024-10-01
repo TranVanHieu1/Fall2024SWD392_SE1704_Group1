@@ -13,4 +13,6 @@ public interface PondRepository extends JpaRepository<Ponds, Integer> {
     Optional<Ponds> findByIdAndAccountId(int pondId, int accountId);
 
     Ponds findByNamePondAndAccountId(String namePond, int id);
+
+    Ponds findById(int id);
 }

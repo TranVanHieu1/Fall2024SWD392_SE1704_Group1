@@ -45,7 +45,7 @@ public class Ponds {
 
     @OneToMany(mappedBy = "ponds", cascade = CascadeType.ALL)
     @Transient
-    private List<KoiFish> koiFishList;
+    private List<Pond_KoiFish> koiFishList;
 
     @OneToMany(mappedBy = "pond")
     @Transient
