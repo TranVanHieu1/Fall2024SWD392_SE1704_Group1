@@ -91,7 +91,7 @@ public enum ErrorCode {
     POND_NOT_FOUND(7006,"Pond Not Found!" , HttpStatus.NOT_FOUND),
 
     //Fish
-    CAN_NOT_SAVE(400, "Can not save fish!", HttpStatus.BAD_REQUEST);
+    CAN_NOT_SAVE(400, "Can not save!", HttpStatus.BAD_REQUEST);
 
     @Getter
     private final Integer code;
