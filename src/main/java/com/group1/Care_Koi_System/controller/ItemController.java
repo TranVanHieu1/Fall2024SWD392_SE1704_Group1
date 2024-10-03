@@ -35,4 +35,14 @@ public class ItemController {
         Optional<ItemResponse> updatedItem = itemService.updateItem(id, itemRequest);
         return updatedItem.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
+    @PutMapping("/{id}")
+    public ResponseEntity<ItemResponse> editItem(@PathVariable int id, @RequestBody ItemRequest itemRequest) {
+        Optional<ItemResponse> updatedItem = itemService.updateItem(id, itemRequest);
+        return updatedItem.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+    @PostMapping("/order/{id}")
+    public ResponseEntity<String> orderItem(@PathVariable int id, @RequestParam int quantity) {
+        String message = itemService.orderItem(id, quantity);
+        return ResponseEntity.ok(message);
+    }
 }

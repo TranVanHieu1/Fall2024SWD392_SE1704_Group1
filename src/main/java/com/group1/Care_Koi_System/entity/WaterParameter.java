@@ -27,15 +27,23 @@ public class WaterParameter {
     @Column
     private LocalDateTime checkDate;
 
-    @Column
-    private double amountOfSalt;
+    @Column(name = "percent_salt")
+    private String percentSalt;
 
     @Column
-    private double temperature;
+    private String temperature;
 
     @Column
-    @Enumerated(EnumType.STRING)
-    private WaterParameterEnum parameter;
+    private String pH;
+
+    @Column
+    private String O2;
+
+    @Column
+    private String NO2;
+
+    @Column
+    private String NO3;
 
     @Column
     private boolean isDeleted;

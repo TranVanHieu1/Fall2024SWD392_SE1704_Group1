@@ -87,8 +87,8 @@ public class KoiFishService {
             response.setDateAdded(pondKoiFish.getDateAdded());
 
             return ResponseEntity.ok(response);
-        } catch (Exception ex) {
-            ErrorCode errorCode = ErrorCode.CAN_NOT_SAVE;
+        } catch (KoiFishException ex) {
+            ErrorCode errorCode = ex.getErrorCode();
             KoiFishResponse exceptionResponse = new KoiFishResponse(errorCode.getMessage());
             return new ResponseEntity<>(exceptionResponse, errorCode.getHttpStatus());
         }
