@@ -16,6 +16,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class KoiFishResponse {
+    private int id;
+
     private String fishName;
 
     private String imageFish;
@@ -42,7 +44,7 @@ public class KoiFishResponse {
 
     private String message;
 
-    public KoiFishResponse(String message){
+    public KoiFishResponse(String message) {
         this.message = message;
     }
 
