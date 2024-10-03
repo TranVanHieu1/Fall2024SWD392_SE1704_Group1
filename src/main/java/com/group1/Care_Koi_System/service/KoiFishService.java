@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 public class KoiFishService {
@@ -91,5 +92,45 @@ public class KoiFishService {
             KoiFishResponse exceptionResponse = new KoiFishResponse(errorCode.getMessage());
             return new ResponseEntity<>(exceptionResponse, errorCode.getHttpStatus());
         }
+    }
+
+    public KoiFishResponse updateKoiFish(int id, KoiFishRequest koiFishRequest) {
+        Optional<KoiFish> optionalKoiFish = koiFishRepository.findById(id);
+        if (optionalKoiFish.isEmpty()) {
+            throw new RuntimeException("KoiFish with ID " + id + " not found.");
+        }
+        KoiFish koiFish = optionalKoiFish.get();
+        // Cập nhật thông tin từ KoiFishRequest vào KoiFish
+        koiFish.setFishName(koiFishRequest.getFishName());
+        koiFish.setImageFish(koiFishRequest.getImageFish());
+        koiFish.setAge(koiFishRequest.getAge());
+        koiFish.setSpecies(koiFishRequest.getSpecies());
+        koiFish.setSize(koiFishRequest.getSize());
+        koiFish.setWeigh(koiFishRequest.getWeigh());
+        koiFish.setGender(koiFishRequest.getGender());
+        koiFish.setOrigin(koiFishRequest.getOrigin());
+        koiFish.setHealthyStatus(koiFishRequest.getHealthyStatus());
+        koiFish.setNote(koiFishRequest.getNote());
+        // Lưu lại KoiFish đã cập nhật
+        koiFishRepository.save(koiFish);
+        return convertToResponse(koiFish);
+    }
+
+    private KoiFishResponse convertToResponse(KoiFish koiFish) {
+        KoiFishResponse response = new KoiFishResponse();
+        response.setId(koiFish.getId());
+        response.setFishName(koiFish.getFishName());
+        response.setImageFish(koiFish.getImageFish());
+        response.setAge(koiFish.getAge());
+        response.setSpecies(koiFish.getSpecies());
+        response.setSize(koiFish.getSize());
+        response.setWeigh(koiFish.getWeigh());
+        response.setGender(koiFish.getGender());
+        response.setOrigin(koiFish.getOrigin());
+        response.setHealthyStatus(koiFish.getHealthyStatus());
+        response.setNote(koiFish.getNote());
+        response.setPondID(koiFish.getPondKoiFish().get(0).getPonds().getId());
+        response.setDateAdded(koiFish.getPondKoiFish().get(0).getDateAdded());
+        return response;
     }
 }

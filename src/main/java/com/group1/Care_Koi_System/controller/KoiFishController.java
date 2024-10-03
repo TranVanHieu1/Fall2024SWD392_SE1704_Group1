@@ -20,4 +20,9 @@ public class KoiFishController {
     public ResponseEntity<KoiFishResponse> addKoiFish( @PathVariable int pondID, @RequestBody KoiFishRequest koiFishRequest){
         return koiFishService.createKoiFish(koiFishRequest, pondID);
     }
+    @PutMapping("/update-fish/{pondID}")
+    public ResponseEntity<KoiFishResponse> updateKoiFish(@PathVariable int pondID, @RequestBody KoiFishRequest koiFishRequest){
+        KoiFishResponse koiFishResponse = new KoiFishResponse("Update Successfully");
+        return ResponseEntity.ok(koiFishResponse);
+    }
 }
