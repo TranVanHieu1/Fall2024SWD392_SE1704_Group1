@@ -4,7 +4,7 @@ import com.group1.Care_Koi_System.dto.Item.ItemRequest;
 import com.group1.Care_Koi_System.dto.Item.ItemResponse;
 import com.group1.Care_Koi_System.entity.FoodItem;
 import com.group1.Care_Koi_System.entity.OrderDetail;
-import com.group1.Care_Koi_System.repository.ItemRepository;
+import com.group1.Care_Koi_System.repository.FoodItemRepository;
 import com.group1.Care_Koi_System.repository.OrderDetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,15 +15,15 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class ItemService {
+public class FoodItemService {
     @Autowired
-    private ItemRepository itemRepository;
+    private FoodItemRepository foodItemRepository;
 
     @Autowired
     private OrderDetailRepository orderDetailRepository;
 
     public List<ItemResponse> getAllItems() {
-        List<FoodItem> foodItems = itemRepository.findAll();
+        List<FoodItem> foodItems = foodItemRepository.findAll();
         return foodItems.stream().map(this::convertToResponse).collect(Collectors.toList());
     }
 
@@ -37,12 +37,12 @@ public class ItemService {
                 .updateAt(LocalDateTime.now())
                 .isDeleted(false)
                 .build();
-        FoodItem savedFoodItem = itemRepository.save(foodItem);
+        FoodItem savedFoodItem = foodItemRepository.save(foodItem);
         return convertToResponse(savedFoodItem);
     }
 
     public Optional<ItemResponse> updateItem(int id, ItemRequest itemRequest) {
-        Optional<FoodItem> itemOptional = itemRepository.findById(id);
+        Optional<FoodItem> itemOptional = foodItemRepository.findById(id);
         if (itemOptional.isPresent()) {
             FoodItem foodItem = itemOptional.get();
             foodItem.setItemName(itemRequest.getItemName());
@@ -51,20 +51,20 @@ public class ItemService {
             foodItem.setQuantity(itemRequest.getQuantity());
             foodItem.setUpdateAt(LocalDateTime.now());
 
-            FoodItem updateFoodItem = itemRepository.save(foodItem);
+            FoodItem updateFoodItem = foodItemRepository.save(foodItem);
             return Optional.of(convertToResponse(updateFoodItem));
         }
         return Optional.empty();
     }
 
     public Optional<ItemResponse> getItemById(int id) {
-        Optional<FoodItem> itemOptional = itemRepository.findById(id);
+        Optional<FoodItem> itemOptional = foodItemRepository.findById(id);
 
         return itemOptional.map(this::convertToResponse);
     }
 
     public ItemResponse editItem(int id, ItemRequest itemRequest) {
-        Optional<FoodItem> existingItemOptional = itemRepository.findById(id);
+        Optional<FoodItem> existingItemOptional = foodItemRepository.findById(id);
         if (existingItemOptional.isEmpty()) {
             throw new RuntimeException("Item with ID " + id + " not found.");
         }
@@ -75,14 +75,14 @@ public class ItemService {
         existingFoodItem.setQuantity(itemRequest.getQuantity());
         existingFoodItem.setUpdateAt(LocalDateTime.now());
 
-        itemRepository.save(existingFoodItem);
+        foodItemRepository.save(existingFoodItem);
 
         return convertToResponse(existingFoodItem);
     }
 
     public String orderItem(int itemId, int quantity) {
         //kiểm tra item có tồn tại không
-        Optional<FoodItem> itemOptional = itemRepository.findById(itemId);
+        Optional<FoodItem> itemOptional = foodItemRepository.findById(itemId);
         if (itemOptional.isEmpty()) {
             throw new RuntimeException("Item with ID " + itemId + " not found.");
         }
@@ -93,7 +93,7 @@ public class ItemService {
         }
         // Cap nhat so luong ton kho
         foodItem.setQuantity(foodItem.getQuantity() - quantity);
-        itemRepository.save(foodItem);
+        foodItemRepository.save(foodItem);
         // Tạo Order mới
         OrderDetail orderDetail = new OrderDetail();
         orderDetail.setFoodItem(foodItem);
