@@ -2,6 +2,7 @@ package com.group1.Care_Koi_System.controller;
 
 
 import com.group1.Care_Koi_System.dto.Account.*;
+import com.group1.Care_Koi_System.exceptionhandler.ResponseException;
 import com.group1.Care_Koi_System.service.AccountService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +37,13 @@ public class AccountController {
     }
 
     @GetMapping("/get-all-account")
-    public ResponseEntity<List<AccountResponse>> viewAccount(){
-        return  accountService.getAllAccount();
+    public ResponseEntity<List<AccountResponse>> viewAccount() {
+        return accountService.getAllAccount();
+    }
+
+    @DeleteMapping("/delete-account/{id}")
+    public ResponseEntity<ResponseException> removeAccount(@PathVariable int id){
+        return accountService.deleteAccount(id);
     }
 
 }

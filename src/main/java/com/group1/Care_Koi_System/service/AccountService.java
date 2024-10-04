@@ -161,6 +161,7 @@ public class AccountService implements UserDetailsService {
 
             for(Account acc : accounts){
                 accountList.add(new AccountResponse(
+                        acc.getId(),
                         acc.getUsername(),
                         acc.getEmail(),
                         acc.getAddress(),
@@ -188,4 +189,32 @@ public class AccountService implements UserDetailsService {
 
     }
 
+    public ResponseEntity<ResponseException> deleteAccount(int id){
+        try{
+            Account account =  accountUtils.getCurrentAccount();
+            if(account == null) {
+                throw new SystemException(ErrorCode.NOT_LOGIN);
+            } else if (!account.getRole().equals(AccountRole.ADMIN)) {
+                throw new SystemException(ErrorCode.ACCOUNT_NOT_ADMIN);
+            }
+
+            try{
+
+                Account acc = accountRepository.findById(id);
+                if(acc == null){
+                    throw new SystemException(ErrorCode.ACCOUNT_NOT_FOUND);
+                }
+                acc.setDeleted(true);
+                accountRepository.save(acc);
+                ResponseException exception = new ResponseException("Delete Successful!");
+                return new ResponseEntity<>(exception, HttpStatus.OK);
+            }catch (SystemException ex){
+                throw new SystemException(ErrorCode.CAN_NOT_DELETE);
+            }
+        }catch (SystemException ex){
+            ErrorCode errorCode = ex.getErrorCode();
+            ResponseException responseException = new ResponseException(ex.getMessage());
+            return new ResponseEntity<>(responseException, errorCode.getHttpStatus());
+        }
+    }
 }

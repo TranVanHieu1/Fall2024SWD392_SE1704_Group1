@@ -36,6 +36,7 @@ public enum ErrorCode {
     EMAIL_EXISTED(1502, "This email has been registered, please log in!", HttpStatus.BAD_REQUEST),
     SUCCESS(200, "Success",HttpStatus.OK),
     CANNOTREGIS(400, "Can not register!", HttpStatus.BAD_REQUEST),
+    CAN_NOT_DELETE(400, "Delete Fail!", HttpStatus.BAD_REQUEST),
 
     //    COURSES | CODE: 2XXX
     COURSE_NOT_FOUND(2001, "Course not found", HttpStatus.NOT_FOUND),

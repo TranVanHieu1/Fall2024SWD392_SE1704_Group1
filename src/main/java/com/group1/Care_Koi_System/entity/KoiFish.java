@@ -54,6 +54,12 @@ public class KoiFish {
     @Enumerated(EnumType.STRING)
     private HealthyStatus healthyStatus;
 
+    @Column(name = "time_feeding")
+    private LocalDateTime timeFeeding;
+
+    @Column(name = "amount_of_food")
+    private double amountOfFood;
+
     @Column
     private String note;
 
@@ -61,6 +67,7 @@ public class KoiFish {
     private boolean isDeleted;
 
     @OneToMany(mappedBy = "koiFish", cascade = CascadeType.ALL)
+    @Transient
     private List<Pond_KoiFish> pondKoiFish;
 
 

@@ -25,4 +25,9 @@ public class KoiFishController {
         KoiFishResponse koiFishResponse = new KoiFishResponse("Update Successfully");
         return ResponseEntity.ok(koiFishResponse);
     }
+
+    @DeleteMapping("/delete-fish/{koiFishID}")
+    public ResponseEntity<String> deleteKoiFish(@PathVariable int koiFishID) {
+        return koiFishService.deleteKoiFish(koiFishID);
+    }
 }
