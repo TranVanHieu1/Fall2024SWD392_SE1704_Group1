@@ -2,7 +2,7 @@ package com.group1.Care_Koi_System.service;
 
 import com.group1.Care_Koi_System.dto.Item.ItemRequest;
 import com.group1.Care_Koi_System.dto.Item.ItemResponse;
-import com.group1.Care_Koi_System.entity.Item;
+import com.group1.Care_Koi_System.entity.FoodItem;
 import com.group1.Care_Koi_System.entity.OrderDetail;
 import com.group1.Care_Koi_System.repository.ItemRepository;
 import com.group1.Care_Koi_System.repository.OrderDetailRepository;
@@ -23,101 +23,97 @@ public class ItemService {
     private OrderDetailRepository orderDetailRepository;
 
     public List<ItemResponse> getAllItems() {
-        List<Item> items = itemRepository.findAll();
-        return items.stream().map(this::convertToResponse).collect(Collectors.toList());
+        List<FoodItem> foodItems = itemRepository.findAll();
+        return foodItems.stream().map(this::convertToResponse).collect(Collectors.toList());
     }
 
     public ItemResponse createItem(ItemRequest itemRequest) {
-        Item item = Item.builder()
+        FoodItem foodItem = FoodItem.builder()
                 .itemName(itemRequest.getItemName())
                 .price(itemRequest.getPrice())
                 .category(itemRequest.getCategory())
                 .quantity(itemRequest.getQuantity())
-                .serviceType(itemRequest.getServiceType())
                 .createAt(LocalDateTime.now())
                 .updateAt(LocalDateTime.now())
                 .isDeleted(false)
                 .build();
-        Item savedItem = itemRepository.save(item);
-        return convertToResponse(savedItem);
+        FoodItem savedFoodItem = itemRepository.save(foodItem);
+        return convertToResponse(savedFoodItem);
     }
 
     public Optional<ItemResponse> updateItem(int id, ItemRequest itemRequest) {
-        Optional<Item> itemOptional = itemRepository.findById(id);
+        Optional<FoodItem> itemOptional = itemRepository.findById(id);
         if (itemOptional.isPresent()) {
-            Item item = itemOptional.get();
-            item.setItemName(itemRequest.getItemName());
-            item.setPrice(itemRequest.getPrice());
-            item.setCategory(itemRequest.getCategory());
-            item.setQuantity(itemRequest.getQuantity());
-            item.setServiceType(itemRequest.getServiceType());
-            item.setUpdateAt(LocalDateTime.now());
+            FoodItem foodItem = itemOptional.get();
+            foodItem.setItemName(itemRequest.getItemName());
+            foodItem.setPrice(itemRequest.getPrice());
+            foodItem.setCategory(itemRequest.getCategory());
+            foodItem.setQuantity(itemRequest.getQuantity());
+            foodItem.setUpdateAt(LocalDateTime.now());
 
-            Item updateItem = itemRepository.save(item);
-            return Optional.of(convertToResponse(updateItem));
+            FoodItem updateFoodItem = itemRepository.save(foodItem);
+            return Optional.of(convertToResponse(updateFoodItem));
         }
         return Optional.empty();
     }
 
     public Optional<ItemResponse> getItemById(int id) {
-        Optional<Item> itemOptional = itemRepository.findById(id);
+        Optional<FoodItem> itemOptional = itemRepository.findById(id);
 
         return itemOptional.map(this::convertToResponse);
     }
 
     public ItemResponse editItem(int id, ItemRequest itemRequest) {
-        Optional<Item> existingItemOptional = itemRepository.findById(id);
+        Optional<FoodItem> existingItemOptional = itemRepository.findById(id);
         if (existingItemOptional.isEmpty()) {
             throw new RuntimeException("Item with ID " + id + " not found.");
         }
-        Item existingItem = existingItemOptional.get();
-        existingItem.setItemName(itemRequest.getItemName());
-        existingItem.setPrice(itemRequest.getPrice());
-        existingItem.setCategory(itemRequest.getCategory());
-        existingItem.setQuantity(itemRequest.getQuantity());
-        existingItem.setServiceType(itemRequest.getServiceType());
-        existingItem.setUpdateAt(LocalDateTime.now());
+        FoodItem existingFoodItem = existingItemOptional.get();
+        existingFoodItem.setItemName(itemRequest.getItemName());
+        existingFoodItem.setPrice(itemRequest.getPrice());
+        existingFoodItem.setCategory(itemRequest.getCategory());
+        existingFoodItem.setQuantity(itemRequest.getQuantity());
+        existingFoodItem.setUpdateAt(LocalDateTime.now());
 
-        itemRepository.save(existingItem);
+        itemRepository.save(existingFoodItem);
 
-        return convertToResponse(existingItem);
+        return convertToResponse(existingFoodItem);
     }
 
     public String orderItem(int itemId, int quantity) {
         //kiểm tra item có tồn tại không
-        Optional<Item> itemOptional = itemRepository.findById(itemId);
+        Optional<FoodItem> itemOptional = itemRepository.findById(itemId);
         if (itemOptional.isEmpty()) {
             throw new RuntimeException("Item with ID " + itemId + " not found.");
         }
-        Item item = itemOptional.get();
+        FoodItem foodItem = itemOptional.get();
         //kiểm tra số lượng đặt hàng có lớn hơn số lượng tồn kho không
-        if (item.getQuantity() < quantity) {
+        if (foodItem.getQuantity() < quantity) {
             throw new RuntimeException("Item with ID " + itemId + " is out of stock.");
         }
         // Cap nhat so luong ton kho
-        item.setQuantity(item.getQuantity() - quantity);
-        itemRepository.save(item);
+        foodItem.setQuantity(foodItem.getQuantity() - quantity);
+        itemRepository.save(foodItem);
         // Tạo Order mới
         OrderDetail orderDetail = new OrderDetail();
-        orderDetail.setItem(item);
+        orderDetail.setFoodItem(foodItem);
         orderDetail.setQuantity(quantity);
-        orderDetail.setPrice(item.getPrice() * quantity);
+        orderDetail.setPrice(foodItem.getPrice() * quantity);
         // Lưu OrderDetail vào cơ sở dữ liệu
         orderDetailRepository.save(orderDetail);
         return "Order successfully.";
     }
 
-    private ItemResponse convertToResponse(Item item) {
+    private ItemResponse convertToResponse(FoodItem foodItem) {
         ItemResponse itemResponse = new ItemResponse();
-        itemResponse.setId(item.getId());
-        itemResponse.setItemName(item.getItemName());
-        itemResponse.setPrice(item.getPrice());
-        itemResponse.setCategory(item.getCategory());
-        itemResponse.setQuantity(item.getQuantity());
-        itemResponse.setServiceType(item.getServiceType());
-        itemResponse.setCreateAt(item.getCreateAt());
-        itemResponse.setUpdateAt(item.getUpdateAt());
-        itemResponse.setDeleted(item.isDeleted());
+        itemResponse.setId(foodItem.getId());
+        itemResponse.setItemName(foodItem.getItemName());
+        itemResponse.setPrice(foodItem.getPrice());
+        itemResponse.setCategory(foodItem.getCategory());
+        itemResponse.setQuantity(foodItem.getQuantity());
+        itemResponse.setCreateAt(foodItem.getCreateAt());
+        itemResponse.setUpdateAt(foodItem.getUpdateAt());
+        itemResponse.setDeleted(foodItem.isDeleted());
 
         return itemResponse;
     }

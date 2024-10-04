@@ -1,7 +1,6 @@
 package com.group1.Care_Koi_System.entity;
 
 import com.group1.Care_Koi_System.entity.Enum.CategoryItem;
-import com.group1.Care_Koi_System.entity.Enum.ServiceType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-public class Item {
+public class FoodItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,10 +32,6 @@ public class Item {
 
     @Column
     private int quantity;
-
-    @Column(name = "service_type")
-    @Enumerated(EnumType.STRING)
-    private ServiceType serviceType;
 
     @Column
     private LocalDateTime createAt;

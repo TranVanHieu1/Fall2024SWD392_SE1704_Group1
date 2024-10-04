@@ -9,6 +9,8 @@ import lombok.*;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AccountResponse {
+    private int id;
+
     private String username;
 
     private String email;
