@@ -39,9 +39,9 @@ public class Ponds {
     @Column
     private boolean isDeleted;
 
-    @OneToMany(mappedBy = "pond")
+    @OneToMany(mappedBy = "ponds")
     @Transient
-    private List<Feeding> feedingLis;
+    private List<Pond_Feeding> pondFeedingList;
 
     @OneToMany(mappedBy = "ponds", cascade = CascadeType.ALL)
     @Transient

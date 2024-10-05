@@ -28,4 +28,7 @@ public class OrderDetail {
 
     @Column
     private double price;
+
+    @Column
+    private boolean isDeleted;
 }

@@ -2,11 +2,18 @@ package com.group1.Care_Koi_System.service;
 
 import com.group1.Care_Koi_System.dto.Item.ItemRequest;
 import com.group1.Care_Koi_System.dto.Item.ItemResponse;
+import com.group1.Care_Koi_System.entity.Account;
+import com.group1.Care_Koi_System.entity.Enum.AccountRole;
 import com.group1.Care_Koi_System.entity.FoodItem;
 import com.group1.Care_Koi_System.entity.OrderDetail;
+import com.group1.Care_Koi_System.exceptionhandler.ErrorCode;
+import com.group1.Care_Koi_System.exceptionhandler.ResponseException;
+import com.group1.Care_Koi_System.exceptionhandler.SystemException;
 import com.group1.Care_Koi_System.repository.FoodItemRepository;
 import com.group1.Care_Koi_System.repository.OrderDetailRepository;
+import com.group1.Care_Koi_System.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -21,6 +28,9 @@ public class FoodItemService {
 
     @Autowired
     private OrderDetailRepository orderDetailRepository;
+
+    @Autowired
+    private AccountUtils accountUtils;
 
     public List<ItemResponse> getAllItems() {
         List<FoodItem> foodItems = foodItemRepository.findAll();
@@ -117,4 +127,6 @@ public class FoodItemService {
 
         return itemResponse;
     }
+
+
 }
