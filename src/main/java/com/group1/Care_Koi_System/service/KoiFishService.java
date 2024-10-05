@@ -133,4 +133,13 @@ public class KoiFishService {
         response.setDateAdded(koiFish.getPondKoiFish().get(0).getDateAdded());
         return response;
     }
+
+    public ResponseEntity<String> deleteKoiFish(int koiFishID) {
+        Optional<KoiFish> koiFish = koiFishRepository.findById(koiFishID);
+        if (koiFish.isEmpty()) {
+            return new ResponseEntity<>("Koi fish not found", HttpStatus.NOT_FOUND);
+        }
+        koiFishRepository.deleteById(koiFishID);
+        return new ResponseEntity<>("Koi fish deleted successfully", HttpStatus.OK);
+    }
 }

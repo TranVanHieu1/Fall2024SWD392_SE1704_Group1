@@ -21,11 +21,14 @@ public class OrderDetail {
 
     @ManyToOne
     @JoinColumn(name = "item_id")
-    private Item item;
+    private FoodItem foodItem;
 
     @Column
     private int quantity;
 
     @Column
     private double price;
+
+    @Column
+    private boolean isDeleted;
 }

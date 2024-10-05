@@ -13,5 +13,6 @@ public class ItemRequest {
     private double price;
     private CategoryItem category;
     private int quantity;
+    private int quantityOrdered;
     private ServiceType serviceType;
 }
