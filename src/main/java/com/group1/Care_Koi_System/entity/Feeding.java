@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 @NoArgsConstructor
@@ -18,9 +19,8 @@ public class Feeding {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne
-    @JoinColumn(name = "pond_id")
-    private Ponds pond;
+    @OneToMany(mappedBy = "feeding")
+    private List<Pond_Feeding> pondFeedingList;
 
     @Column(name = "food_type")
     @Enumerated(EnumType.STRING)
