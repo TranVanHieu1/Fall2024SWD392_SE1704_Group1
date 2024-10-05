@@ -41,9 +41,9 @@ public class FoodItemController {
         Optional<ItemResponse> updatedItem = foodItemService.updateItem(id, itemRequest);
         return updatedItem.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
-    @PostMapping("/order/{id}")
-    public ResponseEntity<String> orderItem(@PathVariable int id, @RequestParam int quantity) {
-        String message = foodItemService.orderItem(id, quantity);
+    @PostMapping("/order/{itemID}")
+    public ResponseEntity<String> orderItem(@PathVariable int itemID, @RequestParam int quantity) {
+        String message = foodItemService.orderItem(itemID, quantity);
         return ResponseEntity.ok(message);
     }
 }
