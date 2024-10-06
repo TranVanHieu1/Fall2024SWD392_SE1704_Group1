@@ -2,10 +2,15 @@ package com.group1.Care_Koi_System.controller;
 
 import com.group1.Care_Koi_System.dto.KoiFish.KoiFishRequest;
 import com.group1.Care_Koi_System.dto.KoiFish.KoiFishResponse;
+import com.group1.Care_Koi_System.entity.Enum.FoodType;
+import com.group1.Care_Koi_System.entity.Feeding;
 import com.group1.Care_Koi_System.service.KoiFishService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
 
 
 @RestController
@@ -29,5 +34,18 @@ public class KoiFishController {
     @DeleteMapping("/delete-fish/{koiFishID}")
     public ResponseEntity<String> deleteKoiFish(@PathVariable int koiFishID) {
         return koiFishService.deleteKoiFish(koiFishID);
+    }
+
+    @PostMapping("/calculate-food")
+    public ResponseEntity<Feeding> calculateFood(
+            @RequestParam int idPond,
+            @RequestParam @Valid FoodType foodType,
+            @RequestParam int fishCount,
+            @RequestParam double pondSize) {
+
+        BigDecimal pondSizeDecimal = BigDecimal.valueOf(pondSize);
+
+        Feeding feeding = koiFishService.calculateFood(idPond, foodType, fishCount, pondSizeDecimal);
+        return ResponseEntity.ok(feeding);
     }
 }
