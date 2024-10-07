@@ -44,6 +44,7 @@ public class Account implements UserDetails {
     private String email;
 
     @Column
+    @Enumerated(EnumType.STRING)
     private GenderEnum gender;
 
     @Column(nullable = false)

@@ -46,4 +46,9 @@ public class AccountController {
         return accountService.deleteAccount(id);
     }
 
+    @PutMapping("/update-profile")
+    public ResponseEntity<ResponseException> updateProfile(@RequestBody UpdateAccountRequest updateAccountRequest){
+        return accountService.updateAccount(updateAccountRequest);
+    }
+
 }
