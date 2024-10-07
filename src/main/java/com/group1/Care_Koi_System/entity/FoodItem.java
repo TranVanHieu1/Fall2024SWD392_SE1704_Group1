@@ -42,7 +42,7 @@ public class FoodItem {
     @Column
     private boolean isDeleted;
 
-    @OneToMany(mappedBy = "item")
+    @OneToMany(mappedBy = "foodItem")
     @Transient
     private List<OrderDetail> orderDetails;
 }

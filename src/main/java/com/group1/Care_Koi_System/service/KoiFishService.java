@@ -2,10 +2,8 @@ package com.group1.Care_Koi_System.service;
 
 import com.group1.Care_Koi_System.dto.KoiFish.KoiFishRequest;
 import com.group1.Care_Koi_System.dto.KoiFish.KoiFishResponse;
-import com.group1.Care_Koi_System.entity.Account;
-import com.group1.Care_Koi_System.entity.KoiFish;
-import com.group1.Care_Koi_System.entity.Pond_KoiFish;
-import com.group1.Care_Koi_System.entity.Ponds;
+import com.group1.Care_Koi_System.entity.*;
+import com.group1.Care_Koi_System.entity.Enum.FoodType;
 import com.group1.Care_Koi_System.exceptionhandler.Account.AccountException;
 import com.group1.Care_Koi_System.exceptionhandler.ErrorCode;
 import com.group1.Care_Koi_System.exceptionhandler.KoiFish.KoiFishException;
@@ -14,13 +12,18 @@ import com.group1.Care_Koi_System.repository.KoiFishRepository;
 import com.group1.Care_Koi_System.repository.PondRepository;
 import com.group1.Care_Koi_System.repository.Pond_KoiFishRepository;
 import com.group1.Care_Koi_System.utils.AccountUtils;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;
+
+import static com.group1.Care_Koi_System.entity.Enum.FoodType.AQUAMASTER;
+import static com.group1.Care_Koi_System.entity.Enum.FoodType.SAKURA;
 
 @Service
 public class KoiFishService {
@@ -135,11 +138,53 @@ public class KoiFishService {
     }
 
     public ResponseEntity<String> deleteKoiFish(int koiFishID) {
-        Optional<KoiFish> koiFish = koiFishRepository.findById(koiFishID);
-        if (koiFish.isEmpty()) {
+        Optional<KoiFish> koiFishOptional = koiFishRepository.findById(koiFishID);
+
+        if (koiFishOptional.isEmpty()) {
             return new ResponseEntity<>("Koi fish not found", HttpStatus.NOT_FOUND);
         }
-        koiFishRepository.deleteById(koiFishID);
-        return new ResponseEntity<>("Koi fish deleted successfully", HttpStatus.OK);
+        KoiFish koiFish = koiFishOptional.get();
+        koiFish.setDeleted(true);
+        koiFishRepository.save(koiFish);
+
+        return new ResponseEntity<>("Koi fish marked as deleted successfully", HttpStatus.OK);
+    }
+
+    public Feeding calculateFood(int idPond, FoodType foodType, int fishCount, BigDecimal pondSize) {
+        Feeding feeding = new Feeding();
+        feeding.setId(idPond);
+        feeding.setFoodType(foodType);
+        feeding.setFeedingTime(LocalDateTime.now());
+
+        feeding.setAmount(calculateFoodAmount(fishCount, pondSize, foodType).doubleValue());
+        return feeding;
+    }
+
+    // Phương thức tính toán lượng thức ăn
+    private BigDecimal calculateFoodAmount(int fishCount, BigDecimal pondSize, @NotNull FoodType foodType) {
+        BigDecimal foodPerFish = new BigDecimal("0.05"); // vi du 0.05 kg cho mỗi con cá
+        BigDecimal baseFoodAmount = foodPerFish.multiply(new BigDecimal(fishCount));
+
+        // Điều chỉnh lượng thức ăn dựa trên loại thức ăn
+        switch (foodType) {
+            case AQUAMASTER: //thanh phan dinh duong cao, hap dan ca
+                return baseFoodAmount.multiply(new BigDecimal("1.1")); // Thêm 10% cho AQUAMASTER
+            case SAKURA: // thuc an tieu chuan
+                return baseFoodAmount; // Không điều chỉnh cho SAKURA
+            case RIO: //thuc an co gia thanh thấp , kkem dinh duong
+                return baseFoodAmount.multiply(new BigDecimal("0.9")); // Giảm 10% cho RIO
+            default:
+                return baseFoodAmount; // Trả về lượng thức ăn cơ bản nếu không có loại nào khớp
+        }
+    }
+
+    public BigDecimal adjustFoodForPondSize(BigDecimal amount, BigDecimal pondSize) {
+        // phuong thuuc dieu chinh luong thuc an dua theo size cua pond
+        if (pondSize.compareTo(new BigDecimal("500")) < 0) {
+            return amount.multiply(new BigDecimal("1.05")); // Ao nhỏ, tăng thêm 5%
+        } else if (pondSize.compareTo(new BigDecimal("1000")) > 0) {
+            return amount.multiply(new BigDecimal("0.95")); // Ao lớn, giảm đi 5%
+        }
+        return amount;
     }
 }
