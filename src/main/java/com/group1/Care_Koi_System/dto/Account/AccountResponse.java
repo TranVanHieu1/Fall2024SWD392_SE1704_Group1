@@ -5,10 +5,11 @@ import com.group1.Care_Koi_System.entity.Enum.AccountRole;
 import lombok.*;
 
 @Data
-@NoArgsConstructor
+
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AccountResponse {
+
     private int id;
 
     private String username;

@@ -189,6 +189,7 @@ public class AccountService implements UserDetailsService {
 
     }
 
+    //Delete account
     public ResponseEntity<ResponseException> deleteAccount(int id){
         try{
             Account account =  accountUtils.getCurrentAccount();
@@ -210,6 +211,33 @@ public class AccountService implements UserDetailsService {
                 return new ResponseEntity<>(exception, HttpStatus.OK);
             }catch (SystemException ex){
                 throw new SystemException(ErrorCode.CAN_NOT_DELETE);
+            }
+        }catch (SystemException ex){
+            ErrorCode errorCode = ex.getErrorCode();
+            ResponseException responseException = new ResponseException(ex.getMessage());
+            return new ResponseEntity<>(responseException, errorCode.getHttpStatus());
+        }
+    }
+
+    public ResponseEntity<ResponseException> updateAccount(UpdateAccountRequest updateAccountRequest){
+        try{
+            Account account =  accountUtils.getCurrentAccount();
+            if(account == null) {
+                throw new SystemException(ErrorCode.NOT_LOGIN);
+            }
+
+            Account acc = accountRepository.findById(account.getId());
+
+            acc.setUserName(updateAccountRequest.getUseName());
+            acc.setAddress(updateAccountRequest.getAddress());
+            acc.setGender(updateAccountRequest.getGender());
+            acc.setPhone(updateAccountRequest.getPhone());
+            try{
+                accountRepository.save(acc);
+                ResponseException respon = new ResponseException("Update successful!");
+                return new ResponseEntity<>(respon, HttpStatus.OK);
+            }catch (SystemException ex){
+                throw new SystemException(ErrorCode.UPDATE_FAILE);
             }
         }catch (SystemException ex){
             ErrorCode errorCode = ex.getErrorCode();

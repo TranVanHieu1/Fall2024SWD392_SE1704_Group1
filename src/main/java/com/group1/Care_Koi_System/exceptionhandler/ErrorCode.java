@@ -30,6 +30,7 @@ public enum ErrorCode {
     ACCOUNT_NOT_ADMIN(1018, "Account not admin", HttpStatus.BAD_REQUEST),
     NOT_PURCHASED_COURSE(1019, "Account has not purchased course", HttpStatus.BAD_REQUEST),
     UNEXPECTED_ERROR(1020, "An unexpected error occurred", HttpStatus.BAD_REQUEST),
+    UPDATE_FAILE(1500, "Update faile!", HttpStatus.BAD_REQUEST),
     //    Accounts | Emails | CODE: 15XX
     INVALID_EMAIL(1500, "Invalid email", HttpStatus.BAD_REQUEST),
     EMAIL_WAIT_VERIFY(1501, "This email has been registered and is not verified, please verify and login", HttpStatus.BAD_REQUEST),
