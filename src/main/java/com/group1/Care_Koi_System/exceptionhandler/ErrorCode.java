@@ -21,20 +21,20 @@ public enum ErrorCode {
     PASSWORD_REPEAT_INCORRECT(1010, "Password repeat do not match", HttpStatus.BAD_REQUEST),
     NOT_LOGIN(1011, "You need to login", HttpStatus.BAD_REQUEST),
     USERNAME_PASSWORD_NOT_CORRECT(1012, "Username or password is not correct", HttpStatus.BAD_REQUEST),
-    ACCOUNT_NOT_FOUND(1013,"Account not found", HttpStatus.NOT_FOUND),
-    EMAIL_NOT_FOUND(1013,"Email not found, please register account.", HttpStatus.NOT_FOUND),
-    ACCOUNT_NOT_INSTRUCTOR(1014,"Account not instructor", HttpStatus.BAD_REQUEST),
-    ACCOUNT_NOT_STUDENT(1015,"Account not student", HttpStatus.BAD_REQUEST),
-    ACCOUNT_IS_DELETED(1016,"This account has been deleted", HttpStatus.BAD_REQUEST),
+    ACCOUNT_NOT_FOUND(1013, "Account not found", HttpStatus.NOT_FOUND),
+    EMAIL_NOT_FOUND(1013, "Email not found, please register account.", HttpStatus.NOT_FOUND),
+    ACCOUNT_NOT_INSTRUCTOR(1014, "Account not instructor", HttpStatus.BAD_REQUEST),
+    ACCOUNT_NOT_STUDENT(1015, "Account not student", HttpStatus.BAD_REQUEST),
+    ACCOUNT_IS_DELETED(1016, "This account has been deleted", HttpStatus.BAD_REQUEST),
     ACCOUNT_NOT_APPROVED(1017, "Account not approved by Admin", HttpStatus.BAD_REQUEST),
-    ACCOUNT_NOT_ADMIN(1018,"Account not admin", HttpStatus.BAD_REQUEST),
+    ACCOUNT_NOT_ADMIN(1018, "Account not admin", HttpStatus.BAD_REQUEST),
     NOT_PURCHASED_COURSE(1019, "Account has not purchased course", HttpStatus.BAD_REQUEST),
     UNEXPECTED_ERROR(1020, "An unexpected error occurred", HttpStatus.BAD_REQUEST),
     //    Accounts | Emails | CODE: 15XX
     INVALID_EMAIL(1500, "Invalid email", HttpStatus.BAD_REQUEST),
     EMAIL_WAIT_VERIFY(1501, "This email has been registered and is not verified, please verify and login", HttpStatus.BAD_REQUEST),
     EMAIL_EXISTED(1502, "This email has been registered, please log in!", HttpStatus.BAD_REQUEST),
-    SUCCESS(200, "Success",HttpStatus.OK),
+    SUCCESS(200, "Success", HttpStatus.OK),
     CANNOTREGIS(400, "Can not register!", HttpStatus.BAD_REQUEST),
     CAN_NOT_DELETE(400, "Delete Fail!", HttpStatus.BAD_REQUEST),
 
@@ -44,8 +44,8 @@ public enum ErrorCode {
     NO_COURSE_IN_WISHLIST(2003, "No courses in wishlist", HttpStatus.BAD_REQUEST),
     INVALID_COURSE_ID(2004, "Invalid course ID", HttpStatus.BAD_REQUEST),
     COURSE_NOT_FOUND_IN_WISHLIST(2005, "Course not found in wishlist", HttpStatus.BAD_REQUEST),
-    COURSE_IS_DELETED(2006,"This Course has been deleted", HttpStatus.BAD_REQUEST),
-    COURSE_IS_UNABLE_TO_SAVE(2008,"This Course is unable to be saved", HttpStatus.CONFLICT),
+    COURSE_IS_DELETED(2006, "This Course has been deleted", HttpStatus.BAD_REQUEST),
+    COURSE_IS_UNABLE_TO_SAVE(2008, "This Course is unable to be saved", HttpStatus.CONFLICT),
     INVALID_PRICE(2007, "Invalid price", HttpStatus.BAD_REQUEST),
     FILE_MAX_SIZE(2008, "Maximum file size exceeded", HttpStatus.REQUEST_HEADER_FIELDS_TOO_LARGE),
 
@@ -55,7 +55,7 @@ public enum ErrorCode {
     ACCOUNT_NOT_MATCH(3002, "Account not match.", HttpStatus.BAD_REQUEST),
     CANCELLED(3003, "Cancelled", HttpStatus.BAD_REQUEST),
     MONTH_WITHOUT_WALLET_LOG(3004, "This are no wallet log this month", HttpStatus.BAD_REQUEST),
-    WALLET_LOG_IS_DELETED(5001,"This Order has been deleted", HttpStatus.BAD_REQUEST),
+    WALLET_LOG_IS_DELETED(5001, "This Order has been deleted", HttpStatus.BAD_REQUEST),
     ERROR_DELETE_WALLET(3005, "Error deleting wallet ", HttpStatus.BAD_REQUEST),
     VALIDATION_ERROR(3005, "Validation failed for create wallet request", HttpStatus.BAD_REQUEST),
     WALLET_ALREADY_EXISTS(3006, "Wallet already exists", HttpStatus.BAD_REQUEST),
@@ -66,7 +66,7 @@ public enum ErrorCode {
 
     //    ORDERS | CODE: 5XXX
     ORDER_NOT_FOUND(5000, "Order not found", HttpStatus.NOT_FOUND),
-    ORDER_IS_DELETED(5001,"This Order has been deleted", HttpStatus.BAD_REQUEST),
+    ORDER_IS_DELETED(5001, "This Order has been deleted", HttpStatus.BAD_REQUEST),
 
     //    WALLETS | CODE: 6XXX
     PRICE_INVALID(6000, "Price must be greater than 0", HttpStatus.BAD_REQUEST),
@@ -87,9 +87,9 @@ public enum ErrorCode {
     // QUIZ | Code 71XX
 
     //Pond
-    POND_ALREADY_EXISTS(7004,"The pond already exists." , HttpStatus.CONFLICT),
-    INVALID_POND_NAME(7005,"Invalid Name Pond",HttpStatus.NOT_FOUND),
-    POND_NOT_FOUND(7006,"Pond Not Found!" , HttpStatus.NOT_FOUND),
+    POND_ALREADY_EXISTS(7004, "The pond already exists.", HttpStatus.CONFLICT),
+    INVALID_POND_NAME(7005, "Invalid Name Pond", HttpStatus.NOT_FOUND),
+    POND_NOT_FOUND(7006, "Pond Not Found!", HttpStatus.NOT_FOUND),
 
     //Fish
     CAN_NOT_SAVE(400, "Can not save!", HttpStatus.BAD_REQUEST);
