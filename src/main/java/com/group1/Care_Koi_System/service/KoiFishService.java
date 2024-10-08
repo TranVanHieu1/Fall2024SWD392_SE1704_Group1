@@ -144,7 +144,9 @@ public class KoiFishService {
             return new ResponseEntity<>("Koi fish not found", HttpStatus.NOT_FOUND);
         }
         KoiFish koiFish = koiFishOptional.get();
+        
         koiFish.setDeleted(true);
+
         koiFishRepository.save(koiFish);
 
         return new ResponseEntity<>("Koi fish marked as deleted successfully", HttpStatus.OK);

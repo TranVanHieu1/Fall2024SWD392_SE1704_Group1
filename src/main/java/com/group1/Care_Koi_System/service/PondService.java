@@ -5,9 +5,13 @@ import com.group1.Care_Koi_System.entity.Account;
 import com.group1.Care_Koi_System.entity.Ponds;
 import com.group1.Care_Koi_System.exceptionhandler.AuthAppException;
 import com.group1.Care_Koi_System.exceptionhandler.ErrorCode;
+import com.group1.Care_Koi_System.exceptionhandler.ResponseException;
+import com.group1.Care_Koi_System.exceptionhandler.SystemException;
 import com.group1.Care_Koi_System.repository.PondRepository;
 import com.group1.Care_Koi_System.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -69,6 +73,32 @@ public class PondService {
         existingPond.setCreateAt(LocalDateTime.now());
 
         return pondRepository.save(existingPond);
+    }
+
+    public ResponseEntity<ResponseException> deletePond(int id){
+        try{
+            Account account =  accountUtils.getCurrentAccount();
+            if(account == null) {
+                throw new SystemException(ErrorCode.NOT_LOGIN);
+            }
+
+            try{
+                Ponds pond = pondRepository.findById(id);
+
+                pond.setDeleted(true);
+                pondRepository.save(pond);
+
+                ResponseException responseException = new ResponseException("Delete successful!");
+                return  new ResponseEntity<>(responseException, HttpStatus.OK);
+            }catch (SystemException ex){
+                throw new SystemException(ErrorCode.CAN_NOT_DELETE);
+            }
+
+        }catch (SystemException ex){
+            ErrorCode errorCode = ex.getErrorCode();
+            ResponseException respon = new ResponseException(ex.getMessage());
+            return  new ResponseEntity<>(respon, errorCode.getHttpStatus());
+        }
     }
 }
 

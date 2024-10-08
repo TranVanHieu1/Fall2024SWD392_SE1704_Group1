@@ -6,6 +6,7 @@ import com.group1.Care_Koi_System.dto.Pond.PondRequest;
 import com.group1.Care_Koi_System.dto.Pond.PondResponse;
 import com.group1.Care_Koi_System.entity.Account;
 import com.group1.Care_Koi_System.entity.Ponds;
+import com.group1.Care_Koi_System.exceptionhandler.ResponseException;
 import com.group1.Care_Koi_System.service.PondService;
 import com.group1.Care_Koi_System.utils.AccountUtils;
 import jakarta.validation.Valid;
@@ -49,5 +50,9 @@ public class PondController {
         return ResponseEntity.ok(apiRes);
     }
 
+    @DeleteMapping("/delete-pond/{pondID}")
+    public ResponseEntity<ResponseException> removePond(@PathVariable int pondID){
+        return pondService.deletePond(pondID);
+    }
 }
 
