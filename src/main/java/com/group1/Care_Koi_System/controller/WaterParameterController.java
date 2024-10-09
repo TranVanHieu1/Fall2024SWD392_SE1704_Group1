@@ -16,8 +16,8 @@ public class WaterParameterController {
     @Autowired
     private WaterParameterService waterParameterService;
 
-    @PostMapping("/add-parameter/{Id}")
-    public ResponseEntity<ResponseException> addParameter(@PathVariable int Id, @RequestBody WaterParameterRequest waterParameterRequest){
-        return  waterParameterService.createWaterParameter(Id, waterParameterRequest);
+    @PostMapping("/add-parameter/{pondID}")
+    public ResponseEntity<ResponseException> addParameter(@PathVariable int pondID, @RequestBody WaterParameterRequest waterParameterRequest){
+        return  waterParameterService.createWaterParameter(pondID, waterParameterRequest);
     }
 }
