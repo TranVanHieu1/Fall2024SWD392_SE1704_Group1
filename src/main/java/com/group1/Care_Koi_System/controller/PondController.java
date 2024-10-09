@@ -54,5 +54,10 @@ public class PondController {
     public ResponseEntity<ResponseException> removePond(@PathVariable int pondID){
         return pondService.deletePond(pondID);
     }
+
+    @GetMapping("/view-pond-by-account")
+    public ResponseEntity<?> viewPondByAccount(){
+        return pondService.getPondsByAccount();
+    }
 }
 
