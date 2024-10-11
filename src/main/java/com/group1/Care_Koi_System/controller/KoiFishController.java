@@ -51,4 +51,9 @@ public class KoiFishController {
         Feeding feeding = koiFishService.calculateFood(idPond, foodType, fishCount, pondSizeDecimal);
         return ResponseEntity.ok(feeding);
     }
+
+    @GetMapping("/get-all-fish")
+    public  ResponseEntity<?> viewAllFish(){
+        return koiFishService.getAllKoiFish();
+    }
 }

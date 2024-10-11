@@ -2,12 +2,14 @@ package com.group1.Care_Koi_System.service;
 
 import com.group1.Care_Koi_System.dto.KoiFish.KoiFishRequest;
 import com.group1.Care_Koi_System.dto.KoiFish.KoiFishResponse;
+import com.group1.Care_Koi_System.dto.Pond.ViewPondResponse;
 import com.group1.Care_Koi_System.entity.*;
 import com.group1.Care_Koi_System.entity.Enum.*;
 import com.group1.Care_Koi_System.exceptionhandler.Account.AccountException;
 import com.group1.Care_Koi_System.exceptionhandler.ErrorCode;
 import com.group1.Care_Koi_System.exceptionhandler.KoiFish.KoiFishException;
 import com.group1.Care_Koi_System.exceptionhandler.ResponseException;
+import com.group1.Care_Koi_System.exceptionhandler.SystemException;
 import com.group1.Care_Koi_System.repository.KoiFishRepository;
 import com.group1.Care_Koi_System.repository.PondRepository;
 import com.group1.Care_Koi_System.repository.Pond_KoiFishRepository;
@@ -20,6 +22,8 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static com.group1.Care_Koi_System.entity.Enum.FoodType.AQUAMASTER;
@@ -190,5 +194,41 @@ public class KoiFishService {
             return amount.multiply(new BigDecimal("0.95")); // Ao lớn, giảm đi 5%
         }
         return amount;
+    }
+
+    public ResponseEntity<?> getAllKoiFish() {
+        try {
+
+            List<KoiFish> koiFishList = koiFishRepository.findAll().stream()
+                    .filter(fish -> !fish.isDeleted()).toList();
+
+            if(koiFishList.isEmpty()){
+                throw new SystemException(ErrorCode.EMPTY);
+            }
+            List<KoiFishResponse> fishs = new ArrayList<>();
+            for(KoiFish fish: koiFishList){
+
+                Pond_KoiFish pondKoiFish = pond_koiFishRepository.findPondsByKoiFishId(fish.getId());
+                fishs.add(new KoiFishResponse(
+                        fish.getId(),
+                        fish.getFishName(),
+                        fish.getImageFish(),
+                        fish.getAge(),
+                        fish.getSpecies(),
+                        fish.getSize(),
+                        fish.getWeigh(),
+                        fish.getGender(),
+                        fish.getOrigin(),
+                        fish.getHealthyStatus(),
+                        fish.getNote(),
+                        pondKoiFish.getPonds().getId()
+                ));
+            }
+            return new ResponseEntity<>(fishs, HttpStatus.OK);
+        } catch (SystemException ex) {
+            ErrorCode errorCode = ex.getErrorCode();
+            ResponseException respon = new ResponseException(ex.getMessage());
+            return new ResponseEntity<>(respon, errorCode.getHttpStatus());
+        }
     }
 }
