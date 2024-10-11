@@ -23,17 +23,9 @@ public class KoiFishRequest {
 
     private int age;
 
-    private KoiSpecies species;
-
     private double size;
 
     private double weigh;
-
-    private KoiGender gender;
-
-    private KoiOrigin origin;
-
-    private HealthyStatus healthyStatus;
 
     private String note;
 }
