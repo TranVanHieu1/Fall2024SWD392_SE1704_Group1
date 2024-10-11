@@ -59,5 +59,10 @@ public class PondController {
     public ResponseEntity<?> viewPondByAccount(){
         return pondService.getPondsByAccount();
     }
+
+    @GetMapping("/get-all-ponds")
+    public ResponseEntity<?> viewAllPonds(){
+        return  pondService.getAllPonds();
+    }
 }
 

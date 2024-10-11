@@ -148,6 +148,38 @@ public class PondService {
             return new ResponseEntity<>(respon, errorCode.getHttpStatus());
         }
     }
+
+    public ResponseEntity<?> getAllPonds() {
+        try {
+
+            List<Ponds> pondsList = pondRepository.findAll().stream()
+                    .filter(pond -> !pond.isDeleted()).toList();
+
+            if(pondsList.isEmpty()){
+                throw new SystemException(ErrorCode.EMPTY);
+            }
+            List<ViewPondResponse> ponds = new ArrayList<>();
+            for(Ponds pond: pondsList){
+
+                List<Pond_KoiFish> pondKoiFish = pond_koiFishRepository.findKoiFishByPondsId(pond.getId());
+                List<String> fishName = pondKoiFish.stream()
+                        .map(koiFish -> koiFish.getKoiFish().getFishName()).toList();
+                ponds.add(new ViewPondResponse(
+                        pond.getId(),
+                        pond.getNamePond(),
+                        fishName,
+                        pond.getImage(),
+                        pond.getSize()
+                ));
+
+            }
+            return new ResponseEntity<>(ponds, HttpStatus.OK);
+        } catch (SystemException ex) {
+            ErrorCode errorCode = ex.getErrorCode();
+            ResponseException respon = new ResponseException(ex.getMessage());
+            return new ResponseEntity<>(respon, errorCode.getHttpStatus());
+        }
+    }
 }
 
 

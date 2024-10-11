@@ -3,7 +3,7 @@ package com.group1.Care_Koi_System.service;
 import com.group1.Care_Koi_System.dto.KoiFish.KoiFishRequest;
 import com.group1.Care_Koi_System.dto.KoiFish.KoiFishResponse;
 import com.group1.Care_Koi_System.entity.*;
-import com.group1.Care_Koi_System.entity.Enum.FoodType;
+import com.group1.Care_Koi_System.entity.Enum.*;
 import com.group1.Care_Koi_System.exceptionhandler.Account.AccountException;
 import com.group1.Care_Koi_System.exceptionhandler.ErrorCode;
 import com.group1.Care_Koi_System.exceptionhandler.KoiFish.KoiFishException;
@@ -40,7 +40,8 @@ public class KoiFishService {
     @Autowired
     private Pond_KoiFishRepository pond_koiFishRepository;
 
-    public ResponseEntity<KoiFishResponse> createKoiFish(KoiFishRequest koiFishRequest, int pondID) {
+    public ResponseEntity<KoiFishResponse> createKoiFish(KoiFishRequest koiFishRequest, KoiSpecies species,
+                                                         KoiGender gender, KoiOrigin origin, HealthyStatus healthyStatus,  int pondID) {
         Account account;
         try {
             account = accountUtils.getCurrentAccount();
@@ -56,12 +57,12 @@ public class KoiFishService {
             koiFish.setFishName(koiFishRequest.getFishName());
             koiFish.setImageFish(koiFishRequest.getImageFish());
             koiFish.setAge(koiFishRequest.getAge());
-            koiFish.setSpecies(koiFishRequest.getSpecies());
+            koiFish.setSpecies(species);
             koiFish.setSize(koiFishRequest.getSize());
             koiFish.setWeigh(koiFishRequest.getWeigh());
-            koiFish.setGender(koiFishRequest.getGender());
-            koiFish.setOrigin(koiFishRequest.getOrigin());
-            koiFish.setHealthyStatus(koiFishRequest.getHealthyStatus());
+            koiFish.setGender(gender);
+            koiFish.setOrigin(origin);
+            koiFish.setHealthyStatus(healthyStatus);
             koiFish.setNote(koiFishRequest.getNote());
             koiFishRepository.save(koiFish);
             //find ponds by id
@@ -97,7 +98,8 @@ public class KoiFishService {
         }
     }
 
-    public KoiFishResponse updateKoiFish(int id, KoiFishRequest koiFishRequest) {
+    public KoiFishResponse updateKoiFish(int id, KoiFishRequest koiFishRequest, KoiSpecies species,
+                                         KoiGender gender, KoiOrigin origin, HealthyStatus healthyStatus) {
         Optional<KoiFish> optionalKoiFish = koiFishRepository.findById(id);
         if (optionalKoiFish.isEmpty()) {
             throw new RuntimeException("KoiFish with ID " + id + " not found.");
@@ -107,12 +109,12 @@ public class KoiFishService {
         koiFish.setFishName(koiFishRequest.getFishName());
         koiFish.setImageFish(koiFishRequest.getImageFish());
         koiFish.setAge(koiFishRequest.getAge());
-        koiFish.setSpecies(koiFishRequest.getSpecies());
+        koiFish.setSpecies(species);
         koiFish.setSize(koiFishRequest.getSize());
         koiFish.setWeigh(koiFishRequest.getWeigh());
-        koiFish.setGender(koiFishRequest.getGender());
-        koiFish.setOrigin(koiFishRequest.getOrigin());
-        koiFish.setHealthyStatus(koiFishRequest.getHealthyStatus());
+        koiFish.setGender(gender);
+        koiFish.setOrigin(origin);
+        koiFish.setHealthyStatus(healthyStatus);
         koiFish.setNote(koiFishRequest.getNote());
         // Lưu lại KoiFish đã cập nhật
         koiFishRepository.save(koiFish);
