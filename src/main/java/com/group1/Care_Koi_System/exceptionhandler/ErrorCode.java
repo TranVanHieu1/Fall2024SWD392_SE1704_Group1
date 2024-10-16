@@ -92,6 +92,12 @@ public enum ErrorCode {
     POND_ALREADY_EXISTS(7004,"The pond already exists." , HttpStatus.CONFLICT),
     INVALID_POND_NAME(7005,"Invalid Name Pond",HttpStatus.NOT_FOUND),
     POND_NOT_FOUND(7006,"Pond Not Found!" , HttpStatus.NOT_FOUND),
+    PERCENTSALT(7002, "The salt percentage should be between 0.1 and 0.5", HttpStatus.BAD_REQUEST),
+    TEMPERATURE(7002, "The temperature shoule be between 20°C and 27°C.", HttpStatus.BAD_REQUEST),
+    PH(7002, "The PH shoule be between 7.0 and 8.5", HttpStatus.BAD_REQUEST),
+    O2(7002, "The O2 shoule be between 6 mg/L and 8 mg/L", HttpStatus.BAD_REQUEST),
+    NO3(7002, "The NO3 shoul be between 10 mg/L and 20 mg/L", HttpStatus.BAD_REQUEST),
+    NO2(7002, "The NO2 shoule be below 0.20 mg/L", HttpStatus.BAD_REQUEST),
 
     //Fish
     CAN_NOT_SAVE(400, "Can not save!", HttpStatus.BAD_REQUEST),
