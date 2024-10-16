@@ -1,5 +1,6 @@
 package com.group1.Care_Koi_System.entity;
 
+import com.group1.Care_Koi_System.entity.Enum.PaymentMethodEnum;
 import com.group1.Care_Koi_System.entity.Enum.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -32,4 +33,8 @@ public class Payment {
     @Column
     @Enumerated(EnumType.STRING)
     private PaymentStatus status;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private PaymentMethodEnum paymentMethod;
 }

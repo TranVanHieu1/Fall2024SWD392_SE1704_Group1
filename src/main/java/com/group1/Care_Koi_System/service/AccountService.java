@@ -245,4 +245,35 @@ public class AccountService implements UserDetailsService {
             return new ResponseEntity<>(responseException, errorCode.getHttpStatus());
         }
     }
+
+    public ResponseEntity<AccountResponse> getAnAccount(int accountID){
+        try{
+            Account account =  accountUtils.getCurrentAccount();
+            if(account == null) {
+                throw new SystemException(ErrorCode.NOT_LOGIN);
+            } else if (!account.getRole().equals(AccountRole.ADMIN)) {
+                throw new SystemException(ErrorCode.ACCOUNT_NOT_ADMIN);
+            }
+            Account acc = accountRepository.findById(accountID);
+            if(acc == null){
+                throw  new SystemException(ErrorCode.ACCOUNT_NOT_FOUND);
+            }
+
+            AccountResponse accountResponse = new AccountResponse(
+                    acc.getId(),
+                    acc.getUsername(),
+                    acc.getEmail(),
+                    acc.getPhone(),
+                    acc.getPhone(),
+                    acc.getRole()
+            );
+            return new ResponseEntity<>(accountResponse, HttpStatus.OK);
+
+        }catch (SystemException ex){
+            ErrorCode errorCode = ex.getErrorCode();
+            AccountResponse responseException = new AccountResponse(ex.getMessage());
+            return  new ResponseEntity<>(responseException, errorCode.getHttpStatus());
+        }
+
+    }
 }

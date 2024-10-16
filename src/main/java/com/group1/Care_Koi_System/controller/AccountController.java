@@ -41,14 +41,19 @@ public class AccountController {
         return accountService.getAllAccount();
     }
 
-    @DeleteMapping("/delete-account/{id}")
-    public ResponseEntity<ResponseException> removeAccount(@PathVariable int id){
-        return accountService.deleteAccount(id);
+    @DeleteMapping("/delete-account/{accountID}")
+    public ResponseEntity<ResponseException> removeAccount(@PathVariable int accountID){
+        return accountService.deleteAccount(accountID);
     }
 
     @PutMapping("/update-profile")
     public ResponseEntity<ResponseException> updateProfile(@RequestBody UpdateAccountRequest updateAccountRequest){
         return accountService.updateAccount(updateAccountRequest);
+    }
+
+    @GetMapping("/get-account/{accountID}")
+    public  ResponseEntity<AccountResponse> getAccountByID(@PathVariable int accountID){
+        return  accountService.getAnAccount(accountID);
     }
 
 }
