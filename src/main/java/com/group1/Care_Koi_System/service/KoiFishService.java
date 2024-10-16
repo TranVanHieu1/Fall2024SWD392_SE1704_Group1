@@ -46,14 +46,12 @@ public class KoiFishService {
 
     public ResponseEntity<KoiFishResponse> createKoiFish(KoiFishRequest koiFishRequest, KoiSpecies species,
                                                          KoiGender gender, KoiOrigin origin, HealthyStatus healthyStatus,  int pondID) {
-        Account account;
-        try {
-            account = accountUtils.getCurrentAccount();
-        } catch (Exception ex) {
-            throw new AccountException(ErrorCode.NOT_LOGIN);
-        }
 
         try {
+            Account account = accountUtils.getCurrentAccount();
+            if(account == null){
+                throw new KoiFishException(ErrorCode.NOT_LOGIN);
+            }
 
             //save koi fish
             KoiFish koiFish = new KoiFish();
@@ -71,6 +69,9 @@ public class KoiFishService {
             koiFishRepository.save(koiFish);
             //find ponds by id
             Ponds ponds = pondRepository.findById(pondID);
+            if(ponds == null){
+                throw new KoiFishException(ErrorCode.POND_NOT_FOUND);
+            }
             //save pond_koifish
 
             pondKoiFish.setPonds(ponds);
@@ -81,7 +82,7 @@ public class KoiFishService {
 
             // Create the response object
             KoiFishResponse response = new KoiFishResponse();
-            response.setPondID(koiFish.getId());
+            response.setPondID(ponds.getId());
             response.setFishName(koiFish.getFishName());
             response.setImageFish(koiFish.getImageFish());
             response.setAge(koiFish.getAge());
