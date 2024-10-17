@@ -14,4 +14,6 @@ public class ApiRes<T> {
     private Integer code;
     private String message;
     private T data;
+
+
 }

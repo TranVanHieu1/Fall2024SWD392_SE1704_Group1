@@ -1,6 +1,7 @@
 package com.group1.Care_Koi_System.dto.KoiFish;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.group1.Care_Koi_System.dto.Pond.PondResponse;
 import com.group1.Care_Koi_System.entity.Enum.HealthyStatus;
 import com.group1.Care_Koi_System.entity.Enum.KoiGender;
 import com.group1.Care_Koi_System.entity.Enum.KoiOrigin;
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Setter
 @Getter
@@ -44,6 +46,7 @@ public class KoiFishResponse {
 
     private LocalDateTime dateAdded;
 
+    private List<PondResponse> ponds;
     private String message;
     public KoiFishResponse(int id, String fishName, String imageFish, int age, KoiSpecies species, double size, double weigh,
                            KoiGender gender, KoiOrigin origin, HealthyStatus healthyStatus, String note, int pondID) {
