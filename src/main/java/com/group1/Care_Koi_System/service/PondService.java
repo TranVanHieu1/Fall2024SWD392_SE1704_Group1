@@ -1,11 +1,13 @@
 package com.group1.Care_Koi_System.service;
 
+import com.group1.Care_Koi_System.dto.ApiRes;
+import com.group1.Care_Koi_System.dto.KoiFish.KoiFishResponse;
 import com.group1.Care_Koi_System.dto.Pond.PondRequest;
+import com.group1.Care_Koi_System.dto.Pond.PondResponse;
 import com.group1.Care_Koi_System.dto.Pond.ViewPondResponse;
-import com.group1.Care_Koi_System.entity.Account;
-import com.group1.Care_Koi_System.entity.KoiFish;
-import com.group1.Care_Koi_System.entity.Pond_KoiFish;
-import com.group1.Care_Koi_System.entity.Ponds;
+import com.group1.Care_Koi_System.dto.SearchPond.PondSearchResponse;
+import com.group1.Care_Koi_System.dto.WaterParameter.WaterParameterResponse;
+import com.group1.Care_Koi_System.entity.*;
 import com.group1.Care_Koi_System.exceptionhandler.AuthAppException;
 import com.group1.Care_Koi_System.exceptionhandler.ErrorCode;
 import com.group1.Care_Koi_System.exceptionhandler.ResponseException;
@@ -19,10 +21,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.stream.Collectors;
+
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.mysql.cj.conf.PropertyKey.logger;
 
 @Service
 public class PondService {
@@ -180,6 +188,89 @@ public class PondService {
             return new ResponseEntity<>(respon, errorCode.getHttpStatus());
         }
     }
+
+
+    public PondSearchResponse searchPond(String namePond, Double minSize, Double maxSize) {
+        PondSearchResponse response = new PondSearchResponse();
+
+        if ((namePond == null || namePond.trim().isEmpty()) && minSize == null && maxSize == null) {
+            response.setMessage("Please provide pond name or size range to search.");
+            response.setPondsList(Collections.emptyList());
+            return response;
+        }
+        List<Ponds> ponds = pondRepository.searchPond(namePond, minSize, maxSize);
+
+
+        if (ponds.isEmpty()) {
+            response.setMessage("No ponds found!");
+            response.setPondsList(Collections.emptyList());
+            return response;
+
+        } else {
+
+            List<PondResponse> pondResponses = ponds.stream()
+                    .map(pond -> {
+                        PondResponse pondResponse = new PondResponse();
+                        pondResponse.setId(pond.getId());
+                        pondResponse.setNamePond(pond.getNamePond());
+                        pondResponse.setSize(pond.getSize());
+                        pondResponse.setVolume(pond.getVolume());
+                        pondResponse.setImage(pond.getImage());
+                        pondResponse.setCreateAt(pond.getCreateAt());
+
+                        List<KoiFishResponse> koiFishResponses = pond.getKoiFishList().stream()
+                                .map(pondKoiFish -> {
+                                    KoiFish koiFish = pondKoiFish.getKoiFish();
+                                    KoiFishResponse koiFishResponse = new KoiFishResponse();
+                                    koiFishResponse.setId(koiFish.getId());
+                                    koiFishResponse.setFishName(koiFish.getFishName());
+                                    koiFishResponse.setAge(koiFish.getAge());
+                                    koiFishResponse.setSize(koiFish.getSize());
+                                    koiFishResponse.setWeigh(koiFish.getWeigh());
+                                    koiFishResponse.setPondID(koiFish.getId());
+                                    koiFishResponse.setDateAdded(pondKoiFish.getDateAdded());
+
+                                    return koiFishResponse; // Trả về KoiFishResponse
+                                })
+                                .collect(Collectors.toList());
+
+                        pondResponse.setKoiFishList(koiFishResponses); // Thiết lập danh sách KoiFishResponse
+
+                        List<WaterParameterResponse> waterParameterResponses = pond.getParameters().stream()
+                                .map(parameters -> {
+
+                                    WaterParameterResponse wpResponse = new WaterParameterResponse();
+
+                                    wpResponse.setPercentSalt(parameters.getPercentSalt());
+                                    wpResponse.setTemperature(parameters.getTemperature());
+                                    wpResponse.setPH(parameters.getPH());
+                                    wpResponse.setO2(parameters.getO2());
+                                    wpResponse.setNO2(parameters.getNO2());
+                                    wpResponse.setNO3(parameters.getNO3());
+                                    wpResponse.setCheckDate(parameters.getCheckDate());
+
+                                    return wpResponse;
+                                })
+                                .collect(Collectors.toList());
+
+                        pondResponse.setParameters(waterParameterResponses); // Thiết lập waterParameters
+
+                        if (pondResponse.getMessage() == null) {
+                            pondResponse.setMessage("No additional info");
+                        }
+                        return pondResponse;
+                    })
+                    .collect(Collectors.toList());
+
+            response.setMessage("Ponds retrieved successfully.");
+            response.setPondsList(pondResponses);
+        }
+
+        return response;
+    }
+
+
+
 }
 
 
