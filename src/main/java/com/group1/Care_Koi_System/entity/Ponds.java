@@ -45,13 +45,12 @@ public class Ponds {
     @Transient
     private List<Pond_Feeding> pondFeedingList;
 
-    @OneToMany(mappedBy = "ponds", cascade = CascadeType.ALL)
-    @Transient
+    @OneToMany(mappedBy = "ponds", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Pond_KoiFish> koiFishList;
 
-    @OneToMany(mappedBy = "pond")
-    @Transient
+    @OneToMany(mappedBy = "pond", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<WaterParameter> parameters;
+
 
     @Column
     private LocalDateTime createAt;

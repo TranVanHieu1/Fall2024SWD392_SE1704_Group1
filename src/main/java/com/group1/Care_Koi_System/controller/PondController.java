@@ -4,6 +4,7 @@ package com.group1.Care_Koi_System.controller;
 import com.group1.Care_Koi_System.dto.ApiRes;
 import com.group1.Care_Koi_System.dto.Pond.PondRequest;
 import com.group1.Care_Koi_System.dto.Pond.PondResponse;
+import com.group1.Care_Koi_System.dto.SearchPond.PondSearchResponse;
 import com.group1.Care_Koi_System.entity.Account;
 import com.group1.Care_Koi_System.entity.Ponds;
 import com.group1.Care_Koi_System.exceptionhandler.ResponseException;
@@ -14,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin("**")
@@ -63,6 +66,13 @@ public class PondController {
     @GetMapping("/get-all-ponds")
     public ResponseEntity<?> viewAllPonds(){
         return  pondService.getAllPonds();
+    }
+
+    @GetMapping("/search")
+    public PondSearchResponse searchPond(@RequestParam(required = false) String namePond,
+                                         @RequestParam(required = false) Double minSize,
+                                         @RequestParam(required = false) Double maxSize) {
+        return pondService.searchPond(namePond, minSize, maxSize);
     }
 }
 
