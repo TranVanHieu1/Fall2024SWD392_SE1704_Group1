@@ -49,9 +49,9 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.__clientidsecretname__ }}
-          tenant-id: ${{ secrets.__tenantidsecretname__ }}
-          subscription-id: ${{ secrets.__subscriptionidsecretname__ }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_71C31FC47C2D49BD8054EEC1B2267CA9 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_6BDF7B8E06EB4A7DBE94AAFB41900A17 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_1E7131C1D0224522A29E74297742524B }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
@@ -60,3 +60,4 @@ jobs:
           app-name: 'carekoisystem'
           slot-name: 'Production'
           package: '*.jar'
+          
