@@ -232,4 +232,47 @@ public class KoiFishService {
             return new ResponseEntity<>(respon, errorCode.getHttpStatus());
         }
     }
+
+    public ResponseEntity<?> getKoiFishByAccount() {
+        try {
+
+            Account account = accountUtils.getCurrentAccount();
+            if(account == null){
+                throw new KoiFishException(ErrorCode.NOT_LOGIN);
+            }
+
+            List<Ponds> pondsList = account.getPonds();
+            if(pondsList.isEmpty()){
+                throw new SystemException(ErrorCode.EMPTY);
+            }
+            List<KoiFishResponse> fishs = new ArrayList<>();
+            for(Ponds pond : pondsList){
+                List<Pond_KoiFish> pondKoiFish = pond.getKoiFishList();
+                for(Pond_KoiFish pond_koiFish : pondKoiFish){
+                    KoiFish fish = pond_koiFish.getKoiFish();
+                    Pond_KoiFish pondKoi = pond_koiFishRepository.findPondsByKoiFishId(fish.getId());
+                    fishs.add(new KoiFishResponse(
+                            fish.getId(),
+                            fish.getFishName(),
+                            fish.getImageFish(),
+                            fish.getBirthDay(),
+                            fish.getSpecies(),
+                            fish.getSize(),
+                            fish.getWeigh(),
+                            fish.getGender(),
+                            fish.getOrigin(),
+                            fish.getHealthyStatus(),
+                            fish.getNote(),
+                            pondKoi.getPonds().getId()
+                    ));
+                }
+            }
+
+            return new ResponseEntity<>(fishs, HttpStatus.OK);
+        } catch (SystemException ex) {
+            ErrorCode errorCode = ex.getErrorCode();
+            ResponseException respon = new ResponseException(ex.getMessage());
+            return new ResponseEntity<>(respon, errorCode.getHttpStatus());
+        }
+    }
 }

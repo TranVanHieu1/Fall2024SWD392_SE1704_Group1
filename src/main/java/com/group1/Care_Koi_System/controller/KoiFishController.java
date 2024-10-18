@@ -56,4 +56,9 @@ public class KoiFishController {
     public  ResponseEntity<?> viewAllFish(){
         return koiFishService.getAllKoiFish();
     }
+
+    @GetMapping("/get-koi-fish-by-account")
+    public ResponseEntity<?> getFishByAccount(){
+        return  koiFishService.getKoiFishByAccount();
+    }
 }
