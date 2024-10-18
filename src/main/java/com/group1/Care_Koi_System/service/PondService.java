@@ -63,7 +63,9 @@ public class PondService {
         pond.setNamePond(request.getNamePond());
         pond.setImage(request.getImage());
         pond.setSize(request.getSize());
-        pond.setVolume(request.getVolume());
+        pond.setHeight(request.getHeight());
+        double volume = request.getSize() * request.getHeight();
+        pond.setVolume(volume);
         pond.setCreateAt(LocalDateTime.now());
         pond.setAccount(accountUtils.getCurrentAccount());
 
@@ -85,10 +87,13 @@ public class PondService {
             throw new AuthAppException(ErrorCode.POND_ALREADY_EXISTS);
         }
 
+
         existingPond.setNamePond(request.getNamePond());
         existingPond.setImage(request.getImage());
         existingPond.setSize(request.getSize());
-        existingPond.setVolume(request.getVolume());
+        existingPond.setHeight(request.getHeight());
+        double volume = request.getSize() * request.getHeight();
+        existingPond.setVolume(volume);
         existingPond.setCreateAt(LocalDateTime.now());
 
         return pondRepository.save(existingPond);
@@ -145,7 +150,8 @@ public class PondService {
                         pond.getNamePond(),
                         fishName,
                         pond.getImage(),
-                        pond.getSize()
+                        pond.getSize(),
+                        pond.getVolume()
                 ));
 
             }
@@ -177,7 +183,8 @@ public class PondService {
                         pond.getNamePond(),
                         fishName,
                         pond.getImage(),
-                        pond.getSize()
+                        pond.getSize(),
+                        pond.getVolume()
                 ));
 
             }

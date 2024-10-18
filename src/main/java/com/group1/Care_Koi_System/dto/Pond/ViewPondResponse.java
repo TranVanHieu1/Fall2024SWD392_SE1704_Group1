@@ -20,4 +20,7 @@ public class ViewPondResponse {
     private String image;
 
     private double pondSize;
+
+    private double volume;
+
 }
