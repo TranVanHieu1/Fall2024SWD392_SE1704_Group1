@@ -21,12 +21,10 @@ import java.util.List;
 public class PondResponse {
 
     private String message;
-    private int id;
     private String namePond;
-    private double size;
-    private double volume;
     private String image;
+    private double size;
+    private double height;
+    private double volume;
     private LocalDateTime createAt;
-    private List<KoiFishResponse> koiFishList;
-    private List<WaterParameterResponse> parameters;
 }
