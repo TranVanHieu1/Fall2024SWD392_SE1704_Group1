@@ -30,8 +30,8 @@ import java.util.List;
                 version = "1.0.0"
         ),
         servers = {
-                @Server(url = "https://fall2024swd392-se1704-group1.onrender.com", description = "Production Server URL"),
-                @Server(url = "http://localhost:8080", description = "Development Server URL")
+                @Server(url = "http://localhost:8080", description = "Development Server URL"),
+                @Server(url = "https://carekoisystem-chb5b3gdaqfwanfr.canadacentral-01.azurewebsites.net", description = "Azure Server URL")
         },
         security = @SecurityRequirement(name = "bearerAuth")
 )
