@@ -21,7 +21,7 @@ public class KoiFishRequest {
 
     private String imageFish;
 
-    private int age;
+    private String birthDay;
 
     private double size;
 

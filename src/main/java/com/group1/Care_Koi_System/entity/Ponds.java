@@ -39,16 +39,21 @@ public class Ponds {
     private double volume;
 
     @Column
+    private double height;
+
+    @Column
     private boolean isDeleted;
 
     @OneToMany(mappedBy = "ponds")
     @Transient
     private List<Pond_Feeding> pondFeedingList;
 
-    @OneToMany(mappedBy = "ponds", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "ponds", cascade = CascadeType.ALL)
+    @Transient
     private List<Pond_KoiFish> koiFishList;
 
-    @OneToMany(mappedBy = "pond", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "pond", cascade = CascadeType.ALL)
+    @Transient
     private List<WaterParameter> parameters;
 
 

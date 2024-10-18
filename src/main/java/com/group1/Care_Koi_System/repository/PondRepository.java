@@ -21,12 +21,5 @@ public interface PondRepository extends JpaRepository<Ponds, Integer> {
 
     List<Ponds> findByAccount(Account account);
 
-    @Query("SELECT p FROM Ponds p LEFT JOIN FETCH p.koiFishList WHERE " +
-            "(:namePond IS NULL OR p.namePond LIKE %:namePond%) AND " +
-            "(:minSize IS NULL OR p.size >= :minSize) AND " +
-            "(:maxSize IS NULL OR p.size <= :maxSize)")
-    List<Ponds> searchPond(@Param("namePond") String namePond,
-                           @Param("minSize") Double minSize,
-                           @Param("maxSize") Double maxSize);
 
 }

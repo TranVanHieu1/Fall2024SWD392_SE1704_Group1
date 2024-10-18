@@ -40,6 +40,9 @@ public class FoodItem {
     private LocalDateTime updateAt;
 
     @Column
+    private String imageFood;
+
+    @Column
     private boolean isDeleted;
 
     @OneToMany(mappedBy = "foodItem")

@@ -68,11 +68,5 @@ public class PondController {
         return  pondService.getAllPonds();
     }
 
-    @GetMapping("/search")
-    public PondSearchResponse searchPond(@RequestParam(required = false) String namePond,
-                                         @RequestParam(required = false) Double minSize,
-                                         @RequestParam(required = false) Double maxSize) {
-        return pondService.searchPond(namePond, minSize, maxSize);
-    }
 }
 

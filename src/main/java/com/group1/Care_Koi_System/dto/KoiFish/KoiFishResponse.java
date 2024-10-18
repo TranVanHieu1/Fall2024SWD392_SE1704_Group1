@@ -26,7 +26,7 @@ public class KoiFishResponse {
 
     private String imageFish;
 
-    private int age;
+    private String birthDay;
 
     private KoiSpecies species;
 
@@ -48,12 +48,12 @@ public class KoiFishResponse {
 
     private List<PondResponse> ponds;
     private String message;
-    public KoiFishResponse(int id, String fishName, String imageFish, int age, KoiSpecies species, double size, double weigh,
+    public KoiFishResponse(int id, String fishName, String imageFish, String birthDay, KoiSpecies species, double size, double weigh,
                            KoiGender gender, KoiOrigin origin, HealthyStatus healthyStatus, String note, int pondID) {
         this.id = id;
         this.fishName = fishName;
         this.imageFish = imageFish;
-        this.age = age;
+        this.birthDay = birthDay;
         this.species = species;
         this.size = size;
         this.weigh = weigh;

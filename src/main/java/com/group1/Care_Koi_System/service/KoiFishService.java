@@ -58,7 +58,7 @@ public class KoiFishService {
             Pond_KoiFish pondKoiFish = new Pond_KoiFish();
             koiFish.setFishName(koiFishRequest.getFishName());
             koiFish.setImageFish(koiFishRequest.getImageFish());
-            koiFish.setAge(koiFishRequest.getAge());
+            koiFish.setBirthDay(koiFishRequest.getBirthDay());
             koiFish.setSpecies(species);
             koiFish.setSize(koiFishRequest.getSize());
             koiFish.setWeigh(koiFishRequest.getWeigh());
@@ -85,7 +85,7 @@ public class KoiFishService {
             response.setPondID(ponds.getId());
             response.setFishName(koiFish.getFishName());
             response.setImageFish(koiFish.getImageFish());
-            response.setAge(koiFish.getAge());
+            response.setBirthDay(koiFish.getBirthDay());
             response.setSpecies(koiFish.getSpecies());
             response.setSize(koiFish.getSize());
             response.setWeigh(koiFish.getWeigh());
@@ -113,7 +113,7 @@ public class KoiFishService {
         // Cập nhật thông tin từ KoiFishRequest vào KoiFish
         koiFish.setFishName(koiFishRequest.getFishName());
         koiFish.setImageFish(koiFishRequest.getImageFish());
-        koiFish.setAge(koiFishRequest.getAge());
+        koiFish.setBirthDay(koiFishRequest.getBirthDay());
         koiFish.setSpecies(species);
         koiFish.setSize(koiFishRequest.getSize());
         koiFish.setWeigh(koiFishRequest.getWeigh());
@@ -131,7 +131,7 @@ public class KoiFishService {
         response.setId(koiFish.getId());
         response.setFishName(koiFish.getFishName());
         response.setImageFish(koiFish.getImageFish());
-        response.setAge(koiFish.getAge());
+        response.setBirthDay(koiFish.getBirthDay());
         response.setSpecies(koiFish.getSpecies());
         response.setSize(koiFish.getSize());
         response.setWeigh(koiFish.getWeigh());
@@ -214,7 +214,7 @@ public class KoiFishService {
                         fish.getId(),
                         fish.getFishName(),
                         fish.getImageFish(),
-                        fish.getAge(),
+                        fish.getBirthDay(),
                         fish.getSpecies(),
                         fish.getSize(),
                         fish.getWeigh(),

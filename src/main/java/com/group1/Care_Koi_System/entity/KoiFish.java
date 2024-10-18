@@ -31,7 +31,7 @@ public class KoiFish {
     private String imageFish;
 
     @Column
-    private int age;
+    private String birthDay;
 
     @Column
     private KoiSpecies species;
