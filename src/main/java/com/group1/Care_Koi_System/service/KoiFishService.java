@@ -238,11 +238,11 @@ public class KoiFishService {
 
             Account account = accountUtils.getCurrentAccount();
             if(account == null){
-                throw new KoiFishException(ErrorCode.NOT_LOGIN);
+                throw new SystemException(ErrorCode.NOT_LOGIN);
             }
 
-            List<Ponds> pondsList = account.getPonds();
-            if(pondsList.isEmpty()){
+            List<Ponds> pondsList = pondRepository.findByAccount(account);
+            if(pondsList == null){
                 throw new SystemException(ErrorCode.EMPTY);
             }
             List<KoiFishResponse> fishs = new ArrayList<>();

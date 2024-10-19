@@ -23,7 +23,7 @@ public class Ponds {
     private int id;
 
     @ManyToOne
-    @JoinColumn(name = "account_id")
+    @JoinColumn(name = "account_id", nullable = false)
     private Account account;
 
     @Column
@@ -45,15 +45,15 @@ public class Ponds {
     private boolean isDeleted;
 
     @OneToMany(mappedBy = "ponds")
-    @Transient
+    @JsonIgnore
     private List<Pond_Feeding> pondFeedingList;
 
     @OneToMany(mappedBy = "ponds", cascade = CascadeType.ALL)
-    @Transient
+    @JsonIgnore
     private List<Pond_KoiFish> koiFishList;
 
     @OneToMany(mappedBy = "pond", cascade = CascadeType.ALL)
-    @Transient
+    @JsonIgnore
     private List<WaterParameter> parameters;
 
 
