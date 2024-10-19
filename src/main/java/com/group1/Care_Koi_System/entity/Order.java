@@ -1,5 +1,6 @@
 package com.group1.Care_Koi_System.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.group1.Care_Koi_System.entity.Enum.OrderStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -39,10 +40,10 @@ public class Order {
     private boolean isDeleted;
 
     @OneToMany(mappedBy = "order")
-    @Transient
+    @JsonIgnore
     private List<OrderDetail> orderDetails;
 
     @OneToOne(mappedBy = "order")
-    @Transient
+    @JsonIgnore
     private Payment payment;
 }

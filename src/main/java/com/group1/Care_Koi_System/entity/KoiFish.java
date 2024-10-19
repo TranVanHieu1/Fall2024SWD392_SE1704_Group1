@@ -1,5 +1,6 @@
 package com.group1.Care_Koi_System.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.group1.Care_Koi_System.entity.Enum.HealthyStatus;
 import com.group1.Care_Koi_System.entity.Enum.KoiGender;
 import com.group1.Care_Koi_System.entity.Enum.KoiOrigin;
@@ -67,7 +68,7 @@ public class KoiFish {
     private boolean isDeleted;
 
     @OneToMany(mappedBy = "koiFish", cascade = CascadeType.ALL)
-    @Transient
+    @JsonIgnore
     private List<Pond_KoiFish> pondKoiFish;
 
 
