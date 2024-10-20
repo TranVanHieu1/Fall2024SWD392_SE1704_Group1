@@ -44,6 +44,9 @@ public class Ponds {
     @Column
     private boolean isDeleted;
 
+    @Column
+    private int maximum;
+
     @OneToMany(mappedBy = "ponds")
     @JsonIgnore
     private List<Pond_Feeding> pondFeedingList;

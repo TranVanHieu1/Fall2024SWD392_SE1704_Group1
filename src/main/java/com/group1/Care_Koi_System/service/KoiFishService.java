@@ -82,6 +82,7 @@ public class KoiFishService {
 
             // Create the response object
             KoiFishResponse response = new KoiFishResponse();
+            response.setId(koiFish.getId());
             response.setPondID(ponds.getId());
             response.setFishName(koiFish.getFishName());
             response.setImageFish(koiFish.getImageFish());
@@ -94,6 +95,7 @@ public class KoiFishService {
             response.setHealthyStatus(koiFish.getHealthyStatus());
             response.setNote(koiFish.getNote());
             response.setDateAdded(pondKoiFish.getDateAdded());
+            response.setMaximum(ponds.getMaximum());
 
             return ResponseEntity.ok(response);
         } catch (KoiFishException ex) {
@@ -266,6 +268,9 @@ public class KoiFishService {
                             pondKoi.getPonds().getId()
                     ));
                 }
+            }
+            if(fishs.isEmpty()){
+                throw new SystemException(ErrorCode.EMPTY);
             }
 
             return new ResponseEntity<>(fishs, HttpStatus.OK);

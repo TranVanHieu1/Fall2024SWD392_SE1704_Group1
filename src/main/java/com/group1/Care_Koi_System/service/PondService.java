@@ -64,8 +64,12 @@ public class PondService {
         pond.setImage(request.getImage());
         pond.setSize(request.getSize());
         pond.setHeight(request.getHeight());
-        double volume = request.getSize() * request.getHeight();
+        double volume = 0;
+        volume = request.getSize() * request.getHeight();
         pond.setVolume(volume);
+        int maximum = 0;
+        maximum = (int)volume * 2;
+        pond.setMaximum(maximum);
         pond.setCreateAt(LocalDateTime.now());
         pond.setAccount(accountUtils.getCurrentAccount());
 

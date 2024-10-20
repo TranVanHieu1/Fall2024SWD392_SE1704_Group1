@@ -47,7 +47,11 @@ public class KoiFishResponse {
     private LocalDateTime dateAdded;
 
     private List<PondResponse> ponds;
+
+    private int maximum;
+
     private String message;
+
     public KoiFishResponse(int id, String fishName, String imageFish, String birthDay, KoiSpecies species, double size, double weigh,
                            KoiGender gender, KoiOrigin origin, HealthyStatus healthyStatus, String note, int pondID) {
         this.id = id;
