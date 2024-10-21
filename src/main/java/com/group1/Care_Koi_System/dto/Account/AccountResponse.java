@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.group1.Care_Koi_System.entity.Enum.AccountRole;
 import lombok.*;
 
-@Data
+@Setter
+@Getter
 
-@AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AccountResponse {
 
@@ -22,4 +22,18 @@ public class AccountResponse {
 
     private AccountRole role;
 
+    private String message;
+
+    public AccountResponse(int id, String username, String email, String address, String phone, AccountRole role) {
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.address = address;
+        this.phone = phone;
+        this.role = role;
+    }
+
+    public AccountResponse(String message) {
+        this.message = message;
+    }
 }

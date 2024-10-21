@@ -1,11 +1,13 @@
 package com.group1.Care_Koi_System.service;
 
+import com.group1.Care_Koi_System.dto.ApiRes;
+import com.group1.Care_Koi_System.dto.KoiFish.KoiFishResponse;
 import com.group1.Care_Koi_System.dto.Pond.PondRequest;
+import com.group1.Care_Koi_System.dto.Pond.PondResponse;
 import com.group1.Care_Koi_System.dto.Pond.ViewPondResponse;
-import com.group1.Care_Koi_System.entity.Account;
-import com.group1.Care_Koi_System.entity.KoiFish;
-import com.group1.Care_Koi_System.entity.Pond_KoiFish;
-import com.group1.Care_Koi_System.entity.Ponds;
+import com.group1.Care_Koi_System.dto.SearchPond.PondSearchResponse;
+import com.group1.Care_Koi_System.dto.WaterParameter.WaterParameterResponse;
+import com.group1.Care_Koi_System.entity.*;
 import com.group1.Care_Koi_System.exceptionhandler.AuthAppException;
 import com.group1.Care_Koi_System.exceptionhandler.ErrorCode;
 import com.group1.Care_Koi_System.exceptionhandler.ResponseException;
@@ -19,10 +21,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.stream.Collectors;
+
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.mysql.cj.conf.PropertyKey.logger;
 
 @Service
 public class PondService {
@@ -55,7 +63,13 @@ public class PondService {
         pond.setNamePond(request.getNamePond());
         pond.setImage(request.getImage());
         pond.setSize(request.getSize());
-        pond.setVolume(request.getVolume());
+        pond.setHeight(request.getHeight());
+        double volume = 0;
+        volume = request.getSize() * request.getHeight();
+        pond.setVolume(volume);
+        int maximum = 0;
+        maximum = (int)volume * 2;
+        pond.setMaximum(maximum);
         pond.setCreateAt(LocalDateTime.now());
         pond.setAccount(accountUtils.getCurrentAccount());
 
@@ -77,10 +91,17 @@ public class PondService {
             throw new AuthAppException(ErrorCode.POND_ALREADY_EXISTS);
         }
 
+
         existingPond.setNamePond(request.getNamePond());
         existingPond.setImage(request.getImage());
         existingPond.setSize(request.getSize());
-        existingPond.setVolume(request.getVolume());
+        existingPond.setHeight(request.getHeight());
+        double volume = 0;
+        volume = request.getSize() * request.getHeight();
+        existingPond.setVolume(volume);
+        int maximum = 0;
+        maximum = (int)volume * 2;
+        existingPond.setMaximum(maximum);
         existingPond.setCreateAt(LocalDateTime.now());
 
         return pondRepository.save(existingPond);
@@ -137,7 +158,8 @@ public class PondService {
                         pond.getNamePond(),
                         fishName,
                         pond.getImage(),
-                        pond.getSize()
+                        pond.getSize(),
+                        pond.getVolume()
                 ));
 
             }
@@ -148,6 +170,41 @@ public class PondService {
             return new ResponseEntity<>(respon, errorCode.getHttpStatus());
         }
     }
+
+    public ResponseEntity<?> getAllPonds() {
+        try {
+
+            List<Ponds> pondsList = pondRepository.findAll().stream()
+                    .filter(pond -> !pond.isDeleted()).toList();
+
+            if(pondsList.isEmpty()){
+                throw new SystemException(ErrorCode.EMPTY);
+            }
+            List<ViewPondResponse> ponds = new ArrayList<>();
+            for(Ponds pond: pondsList){
+
+                List<Pond_KoiFish> pondKoiFish = pond_koiFishRepository.findKoiFishByPondsId(pond.getId());
+                List<String> fishName = pondKoiFish.stream()
+                        .map(koiFish -> koiFish.getKoiFish().getFishName()).toList();
+                ponds.add(new ViewPondResponse(
+                        pond.getId(),
+                        pond.getNamePond(),
+                        fishName,
+                        pond.getImage(),
+                        pond.getSize(),
+                        pond.getVolume()
+                ));
+
+            }
+            return new ResponseEntity<>(ponds, HttpStatus.OK);
+        } catch (SystemException ex) {
+            ErrorCode errorCode = ex.getErrorCode();
+            ResponseException respon = new ResponseException(ex.getMessage());
+            return new ResponseEntity<>(respon, errorCode.getHttpStatus());
+        }
+    }
+
+
 }
 
 

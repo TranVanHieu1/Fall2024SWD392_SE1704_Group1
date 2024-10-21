@@ -2,7 +2,7 @@ package com.group1.Care_Koi_System.controller;
 
 import com.group1.Care_Koi_System.dto.KoiFish.KoiFishRequest;
 import com.group1.Care_Koi_System.dto.KoiFish.KoiFishResponse;
-import com.group1.Care_Koi_System.entity.Enum.FoodType;
+import com.group1.Care_Koi_System.entity.Enum.*;
 import com.group1.Care_Koi_System.entity.Feeding;
 import com.group1.Care_Koi_System.service.KoiFishService;
 import jakarta.validation.Valid;
@@ -22,13 +22,16 @@ public class KoiFishController {
 
 
     @PostMapping("/create-fish/{pondID}")
-    public ResponseEntity<KoiFishResponse> addKoiFish( @PathVariable int pondID, @RequestBody KoiFishRequest koiFishRequest){
-        return koiFishService.createKoiFish(koiFishRequest, pondID);
+    public ResponseEntity<KoiFishResponse> addKoiFish( @PathVariable int pondID, @RequestBody KoiFishRequest koiFishRequest,
+                                                       @RequestParam KoiSpecies species, @RequestParam KoiGender gender,
+                                                       @RequestParam KoiOrigin origin, @RequestParam HealthyStatus healthyStatus){
+        return koiFishService.createKoiFish(koiFishRequest, species, gender, origin, healthyStatus, pondID);
     }
     @PutMapping("/update-fish/{pondID}")
-    public ResponseEntity<KoiFishResponse> updateKoiFish(@PathVariable int pondID, @RequestBody KoiFishRequest koiFishRequest){
-        KoiFishResponse koiFishResponse = new KoiFishResponse("Update Successfully");
-        return ResponseEntity.ok(koiFishResponse);
+    public KoiFishResponse updateKoiFish(@PathVariable int pondID, @RequestBody KoiFishRequest koiFishRequest,
+                                                         @RequestParam KoiSpecies species, @RequestParam KoiGender gender,
+                                                         @RequestParam KoiOrigin origin, @RequestParam HealthyStatus healthyStatus){
+        return  koiFishService.updateKoiFish(pondID, koiFishRequest, species,gender, origin, healthyStatus);
     }
 
     @DeleteMapping("/delete-fish/{koiFishID}")
@@ -47,5 +50,15 @@ public class KoiFishController {
 
         Feeding feeding = koiFishService.calculateFood(idPond, foodType, fishCount, pondSizeDecimal);
         return ResponseEntity.ok(feeding);
+    }
+
+    @GetMapping("/get-all-fish")
+    public  ResponseEntity<?> viewAllFish(){
+        return koiFishService.getAllKoiFish();
+    }
+
+    @GetMapping("/get-koi-fish-by-account")
+    public ResponseEntity<?> getFishByAccount(){
+        return  koiFishService.getKoiFishByAccount();
     }
 }

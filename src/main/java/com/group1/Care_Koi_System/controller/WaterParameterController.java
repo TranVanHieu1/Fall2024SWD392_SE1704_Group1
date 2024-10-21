@@ -20,4 +20,9 @@ public class WaterParameterController {
     public ResponseEntity<ResponseException> addParameter(@PathVariable int pondID, @RequestBody WaterParameterRequest waterParameterRequest){
         return  waterParameterService.createWaterParameter(pondID, waterParameterRequest);
     }
+
+    @PutMapping("/update-parameter/{pondID}")
+    public ResponseEntity<ResponseException> updateParameter(@PathVariable int pondID, @RequestBody WaterParameterRequest waterParameterRequest){
+        return  waterParameterService.updateWaterParameter(pondID, waterParameterRequest);
+    }
 }

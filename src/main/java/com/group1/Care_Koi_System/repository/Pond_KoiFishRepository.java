@@ -11,4 +11,5 @@ import java.util.List;
 @Repository
 public interface Pond_KoiFishRepository extends JpaRepository<Pond_KoiFish, Integer> {
     List<Pond_KoiFish> findKoiFishByPondsId(int id);
+    Pond_KoiFish findPondsByKoiFishId(int id);
 }

@@ -12,5 +12,5 @@ public class PondRequest {
     private String namePond;
     private String image;
     private double size;
-    private double volume;
+    private double height;
 }

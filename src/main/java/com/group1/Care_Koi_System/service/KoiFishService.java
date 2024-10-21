@@ -2,12 +2,14 @@ package com.group1.Care_Koi_System.service;
 
 import com.group1.Care_Koi_System.dto.KoiFish.KoiFishRequest;
 import com.group1.Care_Koi_System.dto.KoiFish.KoiFishResponse;
+import com.group1.Care_Koi_System.dto.Pond.ViewPondResponse;
 import com.group1.Care_Koi_System.entity.*;
-import com.group1.Care_Koi_System.entity.Enum.FoodType;
+import com.group1.Care_Koi_System.entity.Enum.*;
 import com.group1.Care_Koi_System.exceptionhandler.Account.AccountException;
 import com.group1.Care_Koi_System.exceptionhandler.ErrorCode;
 import com.group1.Care_Koi_System.exceptionhandler.KoiFish.KoiFishException;
 import com.group1.Care_Koi_System.exceptionhandler.ResponseException;
+import com.group1.Care_Koi_System.exceptionhandler.SystemException;
 import com.group1.Care_Koi_System.repository.KoiFishRepository;
 import com.group1.Care_Koi_System.repository.PondRepository;
 import com.group1.Care_Koi_System.repository.Pond_KoiFishRepository;
@@ -20,6 +22,8 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static com.group1.Care_Koi_System.entity.Enum.FoodType.AQUAMASTER;
@@ -40,32 +44,36 @@ public class KoiFishService {
     @Autowired
     private Pond_KoiFishRepository pond_koiFishRepository;
 
-    public ResponseEntity<KoiFishResponse> createKoiFish(KoiFishRequest koiFishRequest, int pondID) {
-        Account account;
-        try {
-            account = accountUtils.getCurrentAccount();
-        } catch (Exception ex) {
-            throw new AccountException(ErrorCode.NOT_LOGIN);
-        }
+    public ResponseEntity<KoiFishResponse> createKoiFish(KoiFishRequest koiFishRequest, KoiSpecies species,
+                                                         KoiGender gender, KoiOrigin origin, HealthyStatus healthyStatus,  int pondID) {
 
         try {
+            Account account = accountUtils.getCurrentAccount();
+            if(account == null){
+                throw new KoiFishException(ErrorCode.NOT_LOGIN);
+            }
+
+            //find ponds by id
+            Ponds ponds = pondRepository.findById(pondID);
+            if(ponds == null){
+                throw new KoiFishException(ErrorCode.INVALIDPOND);
+            }
 
             //save koi fish
             KoiFish koiFish = new KoiFish();
             Pond_KoiFish pondKoiFish = new Pond_KoiFish();
             koiFish.setFishName(koiFishRequest.getFishName());
             koiFish.setImageFish(koiFishRequest.getImageFish());
-            koiFish.setAge(koiFishRequest.getAge());
-            koiFish.setSpecies(koiFishRequest.getSpecies());
+            koiFish.setBirthDay(koiFishRequest.getBirthDay());
+            koiFish.setSpecies(species);
             koiFish.setSize(koiFishRequest.getSize());
             koiFish.setWeigh(koiFishRequest.getWeigh());
-            koiFish.setGender(koiFishRequest.getGender());
-            koiFish.setOrigin(koiFishRequest.getOrigin());
-            koiFish.setHealthyStatus(koiFishRequest.getHealthyStatus());
+            koiFish.setGender(gender);
+            koiFish.setOrigin(origin);
+            koiFish.setHealthyStatus(healthyStatus);
             koiFish.setNote(koiFishRequest.getNote());
             koiFishRepository.save(koiFish);
-            //find ponds by id
-            Ponds ponds = pondRepository.findById(pondID);
+
             //save pond_koifish
 
             pondKoiFish.setPonds(ponds);
@@ -76,10 +84,11 @@ public class KoiFishService {
 
             // Create the response object
             KoiFishResponse response = new KoiFishResponse();
-            response.setPondID(koiFish.getId());
+            response.setId(koiFish.getId());
+            response.setPondID(ponds.getId());
             response.setFishName(koiFish.getFishName());
             response.setImageFish(koiFish.getImageFish());
-            response.setAge(koiFish.getAge());
+            response.setBirthDay(koiFish.getBirthDay());
             response.setSpecies(koiFish.getSpecies());
             response.setSize(koiFish.getSize());
             response.setWeigh(koiFish.getWeigh());
@@ -88,6 +97,7 @@ public class KoiFishService {
             response.setHealthyStatus(koiFish.getHealthyStatus());
             response.setNote(koiFish.getNote());
             response.setDateAdded(pondKoiFish.getDateAdded());
+            response.setMaximum(ponds.getMaximum());
 
             return ResponseEntity.ok(response);
         } catch (KoiFishException ex) {
@@ -97,7 +107,8 @@ public class KoiFishService {
         }
     }
 
-    public KoiFishResponse updateKoiFish(int id, KoiFishRequest koiFishRequest) {
+    public KoiFishResponse updateKoiFish(int id, KoiFishRequest koiFishRequest, KoiSpecies species,
+                                         KoiGender gender, KoiOrigin origin, HealthyStatus healthyStatus) {
         Optional<KoiFish> optionalKoiFish = koiFishRepository.findById(id);
         if (optionalKoiFish.isEmpty()) {
             throw new RuntimeException("KoiFish with ID " + id + " not found.");
@@ -106,13 +117,13 @@ public class KoiFishService {
         // Cập nhật thông tin từ KoiFishRequest vào KoiFish
         koiFish.setFishName(koiFishRequest.getFishName());
         koiFish.setImageFish(koiFishRequest.getImageFish());
-        koiFish.setAge(koiFishRequest.getAge());
-        koiFish.setSpecies(koiFishRequest.getSpecies());
+        koiFish.setBirthDay(koiFishRequest.getBirthDay());
+        koiFish.setSpecies(species);
         koiFish.setSize(koiFishRequest.getSize());
         koiFish.setWeigh(koiFishRequest.getWeigh());
-        koiFish.setGender(koiFishRequest.getGender());
-        koiFish.setOrigin(koiFishRequest.getOrigin());
-        koiFish.setHealthyStatus(koiFishRequest.getHealthyStatus());
+        koiFish.setGender(gender);
+        koiFish.setOrigin(origin);
+        koiFish.setHealthyStatus(healthyStatus);
         koiFish.setNote(koiFishRequest.getNote());
         // Lưu lại KoiFish đã cập nhật
         koiFishRepository.save(koiFish);
@@ -124,7 +135,7 @@ public class KoiFishService {
         response.setId(koiFish.getId());
         response.setFishName(koiFish.getFishName());
         response.setImageFish(koiFish.getImageFish());
-        response.setAge(koiFish.getAge());
+        response.setBirthDay(koiFish.getBirthDay());
         response.setSpecies(koiFish.getSpecies());
         response.setSize(koiFish.getSize());
         response.setWeigh(koiFish.getWeigh());
@@ -188,5 +199,87 @@ public class KoiFishService {
             return amount.multiply(new BigDecimal("0.95")); // Ao lớn, giảm đi 5%
         }
         return amount;
+    }
+
+    public ResponseEntity<?> getAllKoiFish() {
+        try {
+
+            List<KoiFish> koiFishList = koiFishRepository.findAll().stream()
+                    .filter(fish -> !fish.isDeleted()).toList();
+
+            if(koiFishList.isEmpty()){
+                throw new SystemException(ErrorCode.EMPTY);
+            }
+            List<KoiFishResponse> fishs = new ArrayList<>();
+            for(KoiFish fish: koiFishList){
+
+                Pond_KoiFish pondKoiFish = pond_koiFishRepository.findPondsByKoiFishId(fish.getId());
+                fishs.add(new KoiFishResponse(
+                        fish.getId(),
+                        fish.getFishName(),
+                        fish.getImageFish(),
+                        fish.getBirthDay(),
+                        fish.getSpecies(),
+                        fish.getSize(),
+                        fish.getWeigh(),
+                        fish.getGender(),
+                        fish.getOrigin(),
+                        fish.getHealthyStatus(),
+                        fish.getNote(),
+                        pondKoiFish.getPonds().getId()
+                ));
+            }
+            return new ResponseEntity<>(fishs, HttpStatus.OK);
+        } catch (SystemException ex) {
+            ErrorCode errorCode = ex.getErrorCode();
+            ResponseException respon = new ResponseException(ex.getMessage());
+            return new ResponseEntity<>(respon, errorCode.getHttpStatus());
+        }
+    }
+
+    public ResponseEntity<?> getKoiFishByAccount() {
+        try {
+
+            Account account = accountUtils.getCurrentAccount();
+            if(account == null){
+                throw new SystemException(ErrorCode.NOT_LOGIN);
+            }
+
+            List<Ponds> pondsList = pondRepository.findByAccount(account);
+            if(pondsList == null){
+                throw new SystemException(ErrorCode.EMPTY);
+            }
+            List<KoiFishResponse> fishs = new ArrayList<>();
+            for(Ponds pond : pondsList){
+                List<Pond_KoiFish> pondKoiFish = pond.getKoiFishList();
+                for(Pond_KoiFish pond_koiFish : pondKoiFish){
+                    KoiFish fish = pond_koiFish.getKoiFish();
+                    Pond_KoiFish pondKoi = pond_koiFishRepository.findPondsByKoiFishId(fish.getId());
+                    fishs.add(new KoiFishResponse(
+                            fish.getId(),
+                            fish.getFishName(),
+                            fish.getImageFish(),
+                            fish.getBirthDay(),
+                            fish.getSpecies(),
+                            fish.getSize(),
+                            fish.getWeigh(),
+                            fish.getGender(),
+                            fish.getOrigin(),
+                            fish.getHealthyStatus(),
+                            fish.getNote(),
+                            pondKoi.getPonds().getId()
+                    ));
+                }
+            }
+            if(fishs.isEmpty()){
+                throw new SystemException(ErrorCode.EMPTY);
+            }
+
+            return new ResponseEntity<>(fishs, HttpStatus.OK);
+        } catch (SystemException ex) {
+            ErrorCode errorCode = ex.getErrorCode();
+            ResponseException respon = new ResponseException(ex.getMessage());
+            return new ResponseEntity<>(respon, errorCode.getHttpStatus());
+        }
     }
 }
