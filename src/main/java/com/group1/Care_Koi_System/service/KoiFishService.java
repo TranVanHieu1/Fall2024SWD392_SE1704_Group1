@@ -53,6 +53,12 @@ public class KoiFishService {
                 throw new KoiFishException(ErrorCode.NOT_LOGIN);
             }
 
+            //find ponds by id
+            Ponds ponds = pondRepository.findById(pondID);
+            if(ponds == null){
+                throw new KoiFishException(ErrorCode.INVALIDPOND);
+            }
+
             //save koi fish
             KoiFish koiFish = new KoiFish();
             Pond_KoiFish pondKoiFish = new Pond_KoiFish();
@@ -67,11 +73,7 @@ public class KoiFishService {
             koiFish.setHealthyStatus(healthyStatus);
             koiFish.setNote(koiFishRequest.getNote());
             koiFishRepository.save(koiFish);
-            //find ponds by id
-            Ponds ponds = pondRepository.findById(pondID);
-            if(ponds == null){
-                throw new KoiFishException(ErrorCode.POND_NOT_FOUND);
-            }
+
             //save pond_koifish
 
             pondKoiFish.setPonds(ponds);
