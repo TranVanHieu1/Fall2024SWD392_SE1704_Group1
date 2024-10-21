@@ -92,6 +92,7 @@ public enum ErrorCode {
     POND_ALREADY_EXISTS(7004,"The pond already exists." , HttpStatus.CONFLICT),
     INVALID_POND_NAME(7005,"Invalid Name Pond",HttpStatus.NOT_FOUND),
     POND_NOT_FOUND(7006,"Pond Not Found!" , HttpStatus.NOT_FOUND),
+    INVALIDPOND(7006,"You have to create a pond before add fish or you have to select pond!" , HttpStatus.NOT_FOUND),
     PERCENTSALT(7002, "The salt percentage should be between 0.1 and 0.5", HttpStatus.BAD_REQUEST),
     TEMPERATURE(7002, "The temperature shoule be between 20°C and 27°C.", HttpStatus.BAD_REQUEST),
     PH(7002, "The PH shoule be between 7.0 and 8.5", HttpStatus.BAD_REQUEST),

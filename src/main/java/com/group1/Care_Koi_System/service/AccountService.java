@@ -1,17 +1,23 @@
 package com.group1.Care_Koi_System.service;
 
 import com.group1.Care_Koi_System.dto.Account.*;
+import com.group1.Care_Koi_System.dto.KoiFish.KoiFishResponse;
 import com.group1.Care_Koi_System.entity.Account;
 import com.group1.Care_Koi_System.entity.Enum.AccountProviderEnum;
 import com.group1.Care_Koi_System.entity.Enum.AccountRole;
 import com.group1.Care_Koi_System.entity.Enum.AccountStatus;
 import com.group1.Care_Koi_System.entity.Enum.GenderEnum;
+import com.group1.Care_Koi_System.entity.KoiFish;
+import com.group1.Care_Koi_System.entity.Pond_KoiFish;
+import com.group1.Care_Koi_System.entity.Ponds;
 import com.group1.Care_Koi_System.exceptionhandler.Account.AccountException;
 import com.group1.Care_Koi_System.exceptionhandler.AuthAppException;
 import com.group1.Care_Koi_System.exceptionhandler.ErrorCode;
 import com.group1.Care_Koi_System.exceptionhandler.ResponseException;
 import com.group1.Care_Koi_System.exceptionhandler.SystemException;
 import com.group1.Care_Koi_System.repository.AccountRepository;
+import com.group1.Care_Koi_System.repository.PondRepository;
+import com.group1.Care_Koi_System.repository.Pond_KoiFishRepository;
 import com.group1.Care_Koi_System.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -51,6 +57,12 @@ public class AccountService implements UserDetailsService {
 
     @Autowired
     private AccountUtils accountUtils;
+
+    @Autowired
+    private PondRepository pondRepository;
+
+    @Autowired
+    private Pond_KoiFishRepository pond_koiFishRepository;
 
     public Account getAccountByEmail(String email){
         Optional<Account> account = accountRepository.findByEmail(email);
@@ -275,5 +287,44 @@ public class AccountService implements UserDetailsService {
             return  new ResponseEntity<>(responseException, errorCode.getHttpStatus());
         }
 
+    }
+
+    public ResponseEntity<DashBoardResponse> dashBoard(){
+        try {
+            Account account =  accountUtils.getCurrentAccount();
+            if(account == null) {
+                throw new SystemException(ErrorCode.NOT_LOGIN);
+            }
+            int countPond = 0;
+            int countUser = 0;
+            int countFish = 0;
+            countUser = accountRepository.findAll().size();
+            List<Ponds> pondsList = pondRepository.findByAccount(account);
+            countPond = pondsList.size();
+
+            if(pondsList == null){
+                throw new SystemException(ErrorCode.EMPTY);
+            }
+
+            for(Ponds pond : pondsList){
+                List<Pond_KoiFish> pondKoiFish = pond.getKoiFishList();
+
+
+                for(Pond_KoiFish pond_koiFish : pondKoiFish){
+                    KoiFish fish = pond_koiFish.getKoiFish();
+                    if(fish != null){
+                        countFish ++;
+
+                    }
+                }
+            }
+
+            DashBoardResponse boardResponse = new DashBoardResponse(countPond, countFish, countUser);
+            return new ResponseEntity<>(boardResponse, HttpStatus.OK);
+        }catch (SystemException ex){
+            ErrorCode errorCode = ex.getErrorCode();
+            DashBoardResponse respon = new DashBoardResponse(ex.getMessage());
+            return new ResponseEntity<>(respon, errorCode.getHttpStatus());
+        }
     }
 }

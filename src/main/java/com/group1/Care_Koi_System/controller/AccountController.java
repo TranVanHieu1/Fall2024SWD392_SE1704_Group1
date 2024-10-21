@@ -56,4 +56,8 @@ public class AccountController {
         return  accountService.getAnAccount(accountID);
     }
 
+    @GetMapping("/dash-board")
+    public ResponseEntity<DashBoardResponse> getDashBoard(){
+        return  accountService.dashBoard();
+    }
 }
