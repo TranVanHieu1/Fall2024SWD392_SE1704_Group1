@@ -29,6 +29,9 @@ public class Payment {
     @Column(name = "total_price")
     private double totalPrice;
 
+    @Column(name = "details")
+    private String details;
+
     @Column
     @Enumerated(EnumType.STRING)
     private PaymentStatus status;
