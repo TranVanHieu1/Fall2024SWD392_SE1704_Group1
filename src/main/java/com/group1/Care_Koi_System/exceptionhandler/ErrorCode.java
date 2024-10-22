@@ -89,11 +89,7 @@ public enum ErrorCode {
     // QUIZ | Code 71XX
 
     //Pond
-<<<<<<< HEAD
-    POND_ALREADY_EXISTS(7004, "The pond already exists.", HttpStatus.CONFLICT),
-    INVALID_POND_NAME(7005, "Invalid Name Pond", HttpStatus.NOT_FOUND),
-    POND_NOT_FOUND(7006, "Pond Not Found!", HttpStatus.NOT_FOUND),
-=======
+
     POND_ALREADY_EXISTS(7004,"The pond already exists." , HttpStatus.CONFLICT),
     INVALID_POND_NAME(7005,"Invalid Name Pond",HttpStatus.NOT_FOUND),
     POND_NOT_FOUND(7006,"Pond Not Found!" , HttpStatus.NOT_FOUND),
@@ -104,7 +100,6 @@ public enum ErrorCode {
     O2(7002, "The O2 shoule be between 6 mg/L and 8 mg/L", HttpStatus.BAD_REQUEST),
     NO3(7002, "The NO3 shoul be between 10 mg/L and 20 mg/L", HttpStatus.BAD_REQUEST),
     NO2(7002, "The NO2 shoule be below 0.20 mg/L", HttpStatus.BAD_REQUEST),
->>>>>>> 105c91e365b1782e1708c88d0ac6b84289fd0f8e
 
     //Fish
     CAN_NOT_SAVE(400, "Can not save!", HttpStatus.BAD_REQUEST),

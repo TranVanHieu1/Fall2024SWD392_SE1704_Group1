@@ -9,6 +9,7 @@ import com.group1.Care_Koi_System.exceptionhandler.OrderDetail.OutOfStockExcepti
 import com.group1.Care_Koi_System.repository.FoodItemRepository;
 import com.group1.Care_Koi_System.repository.OrderDetailRepository;
 import com.group1.Care_Koi_System.utils.AccountUtils;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -108,6 +109,22 @@ public class FoodItemService {
         // Lưu OrderDetail vào cơ sở dữ liệu
         orderDetailRepository.save(orderDetail);
         return "Order placed  successfully.";
+    }
+    public void deleteItem(int id){
+        Optional<FoodItem> optionalFoodItem = foodItemRepository.findById(id);
+
+        // Kiểm tra xem món ăn có tồn tại không
+        if (optionalFoodItem.isPresent()) {
+            FoodItem foodItem = optionalFoodItem.get();
+            // Đánh dấu món ăn là đã bị xóa
+            foodItem.setDeleted(true);
+            // Cập nhật thời gian xóa
+            foodItem.setUpdateAt(LocalDateTime.now());
+            // Lưu thay đổi vào cơ sở dữ liệu
+            foodItemRepository.save(foodItem);
+        } else {
+            throw new EntityNotFoundException("Food item not found with id: " + id);
+        }
     }
 
     private ItemResponse convertToResponse(FoodItem foodItem) {
