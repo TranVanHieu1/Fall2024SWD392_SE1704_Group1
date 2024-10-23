@@ -75,6 +75,48 @@ public class TicketService {
 
     }
 
+    public ResponseEntity<TicketResponse> updateTicket(int ticketID, TicketRequest ticketRequest, int pondId, int fishId) {
+        try {
+            Account account = accountUtils.getCurrentAccount();
+            if (account == null) {
+                throw new SystemException(ErrorCode.NOT_LOGIN);
+            }
+
+            Ticket ticket;
+            ticket = ticketRepository.findById(ticketID);
+
+            if(ticket == null){
+                throw new SystemException(ErrorCode.TICKET_NOT_FOUND);
+            }
+
+            Ponds pond = pondRepository.findById(pondId);
+            KoiFish koiFish = koiFishRepository.findById(fishId);
+
+            if (pond == null || koiFish == null) {
+                throw new SystemException(ErrorCode.INVALIDPONDANDFISH);
+            }
+            ticket.setName(ticketRequest.getName());
+            ticket.setPonds(pond);
+            ticket.setKoiFish(koiFish);
+            ticket.setText(ticketRequest.getText());
+            ticket.setResolved(false);
+            ticketRepository.save(ticket);
+            TicketResponse response = new TicketResponse(
+                    ticket.getId(),
+                    ticket.getName(),
+                    ticket.getPonds().getNamePond(),
+                    ticket.getKoiFish().getFishName(),
+                    ticket.getText()
+            );
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (SystemException ex) {
+            ErrorCode errorCode = ex.getErrorCode();
+            TicketResponse respon = new TicketResponse(ex.getMessage());
+            return new ResponseEntity<>(respon, errorCode.getHttpStatus());
+        }
+    }
+
     public ResponseEntity<?> getAllTickets() {
         try{
             Account account = accountUtils.getCurrentAccount();

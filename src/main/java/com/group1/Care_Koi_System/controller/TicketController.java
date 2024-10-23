@@ -22,6 +22,12 @@ public class TicketController {
         return ticketService.createTicket(ticketRequest, pondID, fishID);
     }
 
+    @PutMapping("/create-ticket/{ticketID}/{pondID}/{fishID}")
+    public ResponseEntity<TicketResponse> addTicket(@RequestBody TicketRequest ticketRequest,
+                                                    @PathVariable int ticketID,@PathVariable int pondID, @PathVariable int fishID){
+        return ticketService.updateTicket( ticketID,ticketRequest, pondID, fishID);
+    }
+
     @GetMapping("get-all-ticket")
     public ResponseEntity<?> getAllTicket(){
         return  ticketService.getAllTickets();

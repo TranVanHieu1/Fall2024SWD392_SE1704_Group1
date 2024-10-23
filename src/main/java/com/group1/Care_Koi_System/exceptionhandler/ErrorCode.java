@@ -102,6 +102,7 @@ public enum ErrorCode {
     INVALIDPONDANDFISH(7006,"You have to create a pond and add fish before create ticket!" , HttpStatus.NOT_FOUND),
     //Fish
     CAN_NOT_SAVE(400, "Can not save!", HttpStatus.BAD_REQUEST),
+    TICKET_NOT_FOUND(404, "Ticket not found!", HttpStatus.BAD_REQUEST),
 
     //orders
     ORDER_NOT_EXISTS(7007,"Order Not Exists!", HttpStatus.NOT_FOUND);
