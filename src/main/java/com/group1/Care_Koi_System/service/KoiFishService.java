@@ -109,11 +109,11 @@ public class KoiFishService {
 
     public KoiFishResponse updateKoiFish(int id, KoiFishRequest koiFishRequest, KoiSpecies species,
                                          KoiGender gender, KoiOrigin origin, HealthyStatus healthyStatus) {
-        Optional<KoiFish> optionalKoiFish = koiFishRepository.findById(id);
-        if (optionalKoiFish.isEmpty()) {
+        KoiFish optionalKoiFish = koiFishRepository.findById(id);
+        if (optionalKoiFish == null) {
             throw new RuntimeException("KoiFish with ID " + id + " not found.");
         }
-        KoiFish koiFish = optionalKoiFish.get();
+        KoiFish koiFish = optionalKoiFish;
         // Cập nhật thông tin từ KoiFishRequest vào KoiFish
         koiFish.setFishName(koiFishRequest.getFishName());
         koiFish.setImageFish(koiFishRequest.getImageFish());
@@ -149,12 +149,12 @@ public class KoiFishService {
     }
 
     public ResponseEntity<String> deleteKoiFish(int koiFishID) {
-        Optional<KoiFish> koiFishOptional = koiFishRepository.findById(koiFishID);
+        KoiFish koiFishOptional = koiFishRepository.findById(koiFishID);
 
-        if (koiFishOptional.isEmpty()) {
+        if (koiFishOptional == null) {
             return new ResponseEntity<>("Koi fish not found", HttpStatus.NOT_FOUND);
         }
-        KoiFish koiFish = koiFishOptional.get();
+        KoiFish koiFish = koiFishOptional;
         
         koiFish.setDeleted(true);
 

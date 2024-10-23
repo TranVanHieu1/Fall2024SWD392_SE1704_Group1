@@ -99,7 +99,7 @@ public enum ErrorCode {
     O2(7002, "The O2 shoule be between 6 mg/L and 8 mg/L", HttpStatus.BAD_REQUEST),
     NO3(7002, "The NO3 shoul be between 10 mg/L and 20 mg/L", HttpStatus.BAD_REQUEST),
     NO2(7002, "The NO2 shoule be below 0.20 mg/L", HttpStatus.BAD_REQUEST),
-
+    INVALIDPONDANDFISH(7006,"You have to create a pond and add fish before create ticket!" , HttpStatus.NOT_FOUND),
     //Fish
     CAN_NOT_SAVE(400, "Can not save!", HttpStatus.BAD_REQUEST),
 

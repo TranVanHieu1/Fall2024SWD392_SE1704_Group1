@@ -55,6 +55,10 @@ public class Ponds {
     @JsonIgnore
     private List<Pond_KoiFish> koiFishList;
 
+    @OneToMany(mappedBy = "ponds", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Ticket> listTicket;
+
     @OneToMany(mappedBy = "pond", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<WaterParameter> parameters;

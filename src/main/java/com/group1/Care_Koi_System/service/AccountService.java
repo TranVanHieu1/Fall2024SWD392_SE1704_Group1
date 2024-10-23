@@ -163,8 +163,6 @@ public class AccountService implements UserDetailsService {
             Account account =  accountUtils.getCurrentAccount();
             if(account == null) {
                 throw new SystemException(ErrorCode.NOT_LOGIN);
-            } else if (!account.getRole().equals(AccountRole.ADMIN)) {
-                throw new SystemException(ErrorCode.ACCOUNT_NOT_ADMIN);
             }
             List<Account> accounts = accountRepository.findAll().stream()
                     .filter(acc -> !acc.isDeleted()).toList();
@@ -263,8 +261,6 @@ public class AccountService implements UserDetailsService {
             Account account =  accountUtils.getCurrentAccount();
             if(account == null) {
                 throw new SystemException(ErrorCode.NOT_LOGIN);
-            } else if (!account.getRole().equals(AccountRole.ADMIN)) {
-                throw new SystemException(ErrorCode.ACCOUNT_NOT_ADMIN);
             }
             Account acc = accountRepository.findById(accountID);
             if(acc == null){
