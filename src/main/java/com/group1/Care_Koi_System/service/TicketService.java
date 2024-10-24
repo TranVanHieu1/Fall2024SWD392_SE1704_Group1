@@ -39,7 +39,7 @@ public class TicketService {
     public ResponseEntity<TicketResponse> createTicket(TicketRequest ticketRequest, int pondId, int fishId) {
         try {
             Account account = accountUtils.getCurrentAccount();
-            if(account == null){
+            if (account == null) {
                 throw new SystemException(ErrorCode.NOT_LOGIN);
             }
 
@@ -85,7 +85,7 @@ public class TicketService {
             Ticket ticket;
             ticket = ticketRepository.findById(ticketID);
 
-            if(ticket == null){
+            if (ticket == null) {
                 throw new SystemException(ErrorCode.TICKET_NOT_FOUND);
             }
 
@@ -118,18 +118,18 @@ public class TicketService {
     }
 
     public ResponseEntity<?> getAllTickets() {
-        try{
+        try {
             Account account = accountUtils.getCurrentAccount();
-            if(account == null){
+            if (account == null) {
                 throw new SystemException(ErrorCode.NOT_LOGIN);
             }
             List<Ticket> listTicket = ticketRepository.findByIsResolvedFalseAndIsDeletedFalse();
 
-            if(listTicket.isEmpty()){
+            if (listTicket.isEmpty()) {
                 throw new SystemException(ErrorCode.EMPTY);
             }
             List<TicketResponse> tickets = new ArrayList<>();
-            for(Ticket ticket: listTicket){
+            for (Ticket ticket : listTicket) {
 
                 tickets.add(new TicketResponse(
                         ticket.getId(),
@@ -140,10 +140,77 @@ public class TicketService {
                 ));
             }
             return new ResponseEntity<>(tickets, HttpStatus.OK);
-    } catch (SystemException ex) {
-        ErrorCode errorCode = ex.getErrorCode();
-        TicketResponse respon = new TicketResponse(ex.getMessage());
-        return new ResponseEntity<>(respon, errorCode.getHttpStatus());
+        } catch (SystemException ex) {
+            ErrorCode errorCode = ex.getErrorCode();
+            TicketResponse respon = new TicketResponse(ex.getMessage());
+            return new ResponseEntity<>(respon, errorCode.getHttpStatus());
+        }
     }
+
+    public ResponseEntity<?> getTicketByAccount() {
+        try {
+            Account account = accountUtils.getCurrentAccount();
+            if (account == null) {
+                throw new SystemException(ErrorCode.NOT_LOGIN);
+            }
+            List<Ponds> pondsList = pondRepository.findByAccount(account).stream()
+                    .filter(ponds -> !ponds.isDeleted()).toList();
+
+            if(pondsList.isEmpty()){
+                throw new SystemException(ErrorCode.POND_NOT_FOUND);
+            }
+
+            List<Ticket> listTicket = new ArrayList<>();
+
+            for(Ponds pond : pondsList){
+                listTicket = pond.getListTicket().stream()
+                        .filter(ticket -> !ticket.isDeleted() && !ticket.isResolved()).toList();
+            }
+            if (listTicket.isEmpty()) {
+                throw new SystemException(ErrorCode.EMPTY);
+            }
+            List<TicketResponse> tickets = new ArrayList<>();
+            for (Ticket ticket : listTicket) {
+
+                tickets.add(new TicketResponse(
+                        ticket.getId(),
+                        ticket.getName(),
+                        ticket.getPonds().getNamePond(),
+                        ticket.getKoiFish().getFishName(),
+                        ticket.getText()
+                ));
+            }
+            return new ResponseEntity<>(tickets, HttpStatus.OK);
+        } catch (SystemException ex) {
+            ErrorCode errorCode = ex.getErrorCode();
+            TicketResponse respon = new TicketResponse(ex.getMessage());
+            return new ResponseEntity<>(respon, errorCode.getHttpStatus());
+        }
+    }
+
+    public ResponseEntity<ResponseException> deleteTicket(int id) {
+        try {
+            Account account = accountUtils.getCurrentAccount();
+            if (account == null) {
+                throw new SystemException(ErrorCode.NOT_LOGIN);
+            }
+
+            try {
+                Ticket ticket = ticketRepository.findById(id);
+
+                ticket.setDeleted(true);
+                ticketRepository.save(ticket);
+
+                ResponseException responseException = new ResponseException("Delete successful!");
+                return new ResponseEntity<>(responseException, HttpStatus.OK);
+            } catch (SystemException ex) {
+                throw new SystemException(ErrorCode.CAN_NOT_DELETE);
+            }
+
+        } catch (SystemException ex) {
+            ErrorCode errorCode = ex.getErrorCode();
+            ResponseException respon = new ResponseException(ex.getMessage());
+            return new ResponseEntity<>(respon, errorCode.getHttpStatus());
+        }
     }
 }
