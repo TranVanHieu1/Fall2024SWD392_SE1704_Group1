@@ -3,6 +3,7 @@ package com.group1.Care_Koi_System.controller;
 
 import com.group1.Care_Koi_System.dto.Ticket.TicketRequest;
 import com.group1.Care_Koi_System.dto.Ticket.TicketResponse;
+import com.group1.Care_Koi_System.exceptionhandler.ResponseException;
 import com.group1.Care_Koi_System.service.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,5 +32,15 @@ public class TicketController {
     @GetMapping("get-all-ticket")
     public ResponseEntity<?> getAllTicket(){
         return  ticketService.getAllTickets();
+    }
+
+    @GetMapping("get-ticket-by-account")
+    public ResponseEntity<?> getTicketByAccount(){
+        return  ticketService.getTicketByAccount();
+    }
+
+    @DeleteMapping("delete-ticket/{ticketID}")
+    public ResponseEntity<ResponseException> deleteTicket(@PathVariable int ticketID){
+        return ticketService.deleteTicket(ticketID);
     }
 }
