@@ -105,7 +105,8 @@ public enum ErrorCode {
     TICKET_NOT_FOUND(404, "Ticket not found!", HttpStatus.BAD_REQUEST),
 
     //orders
-    ORDER_NOT_EXISTS(7007,"Order Not Exists!", HttpStatus.NOT_FOUND);
+    ORDER_NOT_EXISTS(7007,"Order Not Exists!", HttpStatus.NOT_FOUND),
+    INVALID_NUMBER(7006, "You have to input number!", HttpStatus.BAD_REQUEST);
 
 
     @Getter
