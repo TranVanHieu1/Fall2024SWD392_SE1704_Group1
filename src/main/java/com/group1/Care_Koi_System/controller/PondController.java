@@ -30,14 +30,28 @@ public class PondController {
 
 
     @PostMapping("/create-pond")
-    public ResponseEntity<ResponseException> createPond(@RequestBody @Valid PondRequest request) {
-        return pondService.createPond(request);
+    public ResponseEntity<ApiRes<PondResponse>> createPond(@RequestBody @Valid PondRequest request) {
+
+        Account account = accountUtils.getCurrentAccount();
+        Ponds pond = pondService.createPond(request);
+        ApiRes<PondResponse> apiRes = new ApiRes<>();
+        apiRes.setMessage("Create Pond SuccessFully");
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(apiRes);
     }
 
-    @PutMapping("update/{pondId}")
-    public ResponseEntity<ResponseException> updatePond(@PathVariable int pondId, @RequestBody PondRequest request) {
-        return pondService.updatePond(pondId, request);
-    }
+
+   /* @PutMapping("update/{pondId}")
+    public ResponseEntity<ApiRes<PondResponse>> updatePond(@PathVariable int pondId, @RequestBody PondRequest request) {
+
+        int accountId = accountUtils.getCurrentAccount().getId();
+        Ponds updatedPond = pondService.updatePond(pondId, request, accountId);
+
+        ApiRes<PondResponse> apiRes = new ApiRes<>();
+        apiRes.setMessage("Update Successfully!");
+
+        return ResponseEntity.ok(apiRes);
+    }*/
 
     @DeleteMapping("/delete-pond/{pondID}")
     public ResponseEntity<ResponseException> removePond(@PathVariable int pondID){
