@@ -3,7 +3,9 @@ package com.group1.Care_Koi_System.controller;
 import com.group1.Care_Koi_System.dto.Item.ItemRequest;
 import com.group1.Care_Koi_System.dto.Item.ItemResponse;
 import com.group1.Care_Koi_System.service.FoodItemService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,5 +47,14 @@ public class FoodItemController {
     public ResponseEntity<String> orderItem(@PathVariable int itemID, @RequestParam int quantity) {
         String message = foodItemService.orderItem(itemID, quantity);
         return ResponseEntity.ok(message);
+    }
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteFoodItem(@PathVariable int id) {
+        try {
+            foodItemService.deleteItem(id);
+            return ResponseEntity.ok("Food item deleted successfully.");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 }
