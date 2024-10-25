@@ -30,14 +30,8 @@ public class PondController {
 
 
     @PostMapping("/create-pond")
-    public ResponseEntity<ApiRes<PondResponse>> createPond(@RequestBody @Valid PondRequest request) {
-
-        Account account = accountUtils.getCurrentAccount();
-        Ponds pond = pondService.createPond(request);
-        ApiRes<PondResponse> apiRes = new ApiRes<>();
-        apiRes.setMessage("Create Pond SuccessFully");
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(apiRes);
+    public ResponseEntity<ResponseException> createPond(@RequestBody @Valid PondRequest request) {
+        return pondService.createPond(request);
     }
 
 
