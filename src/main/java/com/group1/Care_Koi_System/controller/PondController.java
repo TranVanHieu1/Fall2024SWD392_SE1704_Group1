@@ -36,15 +36,8 @@ public class PondController {
 
 
     @PutMapping("update/{pondId}")
-    public ResponseEntity<ApiRes<PondResponse>> updatePond(@PathVariable int pondId, @RequestBody PondRequest request) {
-
-        int accountId = accountUtils.getCurrentAccount().getId();
-        Ponds updatedPond = pondService.updatePond(pondId, request, accountId);
-
-        ApiRes<PondResponse> apiRes = new ApiRes<>();
-        apiRes.setMessage("Update Successfully!");
-
-        return ResponseEntity.ok(apiRes);
+    public ResponseEntity<ResponseException> updatePond(@PathVariable int pondId, @RequestBody PondRequest request) {
+        return pondService.updatePond(pondId, request);
     }
 
     @DeleteMapping("/delete-pond/{pondID}")
