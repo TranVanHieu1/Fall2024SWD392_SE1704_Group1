@@ -86,35 +86,47 @@ public class PondService {
     }
 
 
- /*   public Ponds updatePond(int pondId, PondRequest request, int accountId) {
+    public ResponseEntity<ResponseException> updatePond(int pondId, PondRequest request) {
+        try {
+            Account account = accountUtils.getCurrentAccount();
+            if (account == null) {
+                throw new SystemException(ErrorCode.NOT_LOGIN);
+            }
 
-        Ponds existingPond = pondRepository.findByIdAndAccountId(pondId, accountId)
-                .orElseThrow(() -> new AuthAppException(ErrorCode.POND_NOT_FOUND));
+            Ponds existingPond = pondRepository.findById(pondId);
+            if(existingPond == null) {
+                throw new SystemException(ErrorCode.POND_NOT_FOUND);
+            }
 
-        if (request.getNamePond() == null || request.getNamePond().isEmpty()) {
-            throw new AuthAppException(ErrorCode.INVALID_POND_NAME);
+
+            if (request.getNamePond() == null || request.getNamePond().isEmpty()) {
+                throw new AuthAppException(ErrorCode.INVALID_POND_NAME);
+            }
+
+            Ponds pondWithSameName = pondRepository.findByNamePond(request.getNamePond());
+            if (pondWithSameName != null && pondWithSameName.getId() != pondId) {
+                throw new AuthAppException(ErrorCode.POND_ALREADY_EXISTS);
+            }
+
+
+            existingPond.setNamePond(request.getNamePond());
+            existingPond.setImage(request.getImage());
+            existingPond.setSize(request.getSize());
+            existingPond.setHeight(request.getHeight());
+            double volume = request.getSize() * request.getHeight();
+            existingPond.setVolume(volume);
+            existingPond.setCreateAt(LocalDateTime.now());
+
+            pondRepository.save(existingPond);
+
+            ResponseException responseException = new ResponseException("Update Successfully!");
+            return ResponseEntity.ok(responseException);
+        }catch (SystemException ex) {
+            ErrorCode errorCode = ex.getErrorCode();
+            ResponseException respon = new ResponseException(ex.getMessage());
+            return new ResponseEntity<>(respon, errorCode.getHttpStatus());
         }
-
-        Ponds pondWithSameName = pondRepository.findByNamePondAndAccountId(request.getNamePond(), accountId);
-        if (pondWithSameName != null && pondWithSameName.getId() != pondId) {
-            throw new AuthAppException(ErrorCode.POND_ALREADY_EXISTS);
-        }
-
-
-        existingPond.setNamePond(request.getNamePond());
-        existingPond.setImage(request.getImage());
-        existingPond.setSize(request.getSize());
-        existingPond.setHeight(request.getHeight());
-        double volume = 0;
-        volume = request.getSize() * request.getHeight();
-        existingPond.setVolume(volume);
-        int maximum = 0;
-        maximum = (int)volume * 2;
-        existingPond.setMaximum(maximum);
-        existingPond.setCreateAt(LocalDateTime.now());
-
-        return pondRepository.save(existingPond);
-    }*/
+    }
 
     public ResponseEntity<ResponseException> deletePond(int id) {
         try {
