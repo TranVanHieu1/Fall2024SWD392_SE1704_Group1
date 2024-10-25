@@ -86,7 +86,7 @@ public class PondService {
     }
 
 
-    public ResponseEntity<ResponseException> updatePond(int pondId, PondRequest request) {
+    /*public ResponseEntity<ResponseException> updatePond(int pondId, PondRequest request) {
         try {
             Account account = accountUtils.getCurrentAccount();
             if (account == null) {
@@ -126,7 +126,7 @@ public class PondService {
             ResponseException respon = new ResponseException(ex.getMessage());
             return new ResponseEntity<>(respon, errorCode.getHttpStatus());
         }
-    }
+    }*/
 
     public ResponseEntity<ResponseException> deletePond(int id) {
         try {
