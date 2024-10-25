@@ -35,15 +35,11 @@ public class FoodItemService {
     }
 
     public ItemResponse createItem(ItemRequest itemRequest) {
-        FoodItem foodItem = FoodItem.builder()
-                .itemName(itemRequest.getItemName())
-                .price(itemRequest.getPrice())
-                .category(itemRequest.getCategory())
-                .quantity(itemRequest.getQuantity())
-                .createAt(LocalDateTime.now())
-                .updateAt(LocalDateTime.now())
-                .isDeleted(false)
-                .build();
+        Optional<FoodItem> existingItem = foodItemRepository.findByItemName(itemRequest.getItemName());
+        if (existingItem.isPresent()) {
+            throw new RuntimeException("Item with name " + itemRequest.getItemName() + " already exists.");
+        }
+        FoodItem foodItem = FoodItem.builder().itemName(itemRequest.getItemName()).price(itemRequest.getPrice()).category(itemRequest.getCategory()).quantity(itemRequest.getQuantity()).createAt(LocalDateTime.now()).updateAt(LocalDateTime.now()).build();
         FoodItem savedFoodItem = foodItemRepository.save(foodItem);
         return convertToResponse(savedFoodItem);
     }
@@ -110,7 +106,8 @@ public class FoodItemService {
         orderDetailRepository.save(orderDetail);
         return "Order placed  successfully.";
     }
-    public void deleteItem(int id){
+
+    public void deleteItem(int id) {
         Optional<FoodItem> optionalFoodItem = foodItemRepository.findById(id);
 
         // Kiểm tra xem món ăn có tồn tại không
