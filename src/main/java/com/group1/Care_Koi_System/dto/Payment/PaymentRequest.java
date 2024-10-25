@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class PaymentRequest {
-    long total_price;
+    long totalPrice;
     String ipAddr;
 }

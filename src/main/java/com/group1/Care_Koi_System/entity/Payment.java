@@ -28,7 +28,7 @@ public class Payment {
     private LocalDateTime paymentDate;
 
     @Column(name = "total_price")
-    private double totalPrice;
+    private long totalPrice;
 
     @Column(name = "details")
     private String details;

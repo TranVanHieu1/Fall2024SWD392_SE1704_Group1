@@ -18,9 +18,9 @@ public class PaymentController {
     private PaymentService paymentService;
 
     @PostMapping("/create")
-    public ResponseEntity<String> createPayment(@RequestBody PaymentRequest paymentRequest) {
+    public ResponseEntity<String> createPayment(@RequestBody PaymentRequest request) {
         try {
-            String paymentUrl = paymentService.createPayment(paymentRequest);
+            String paymentUrl = paymentService.createPayment(request);
             return ResponseEntity.ok(paymentUrl);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating payment: " + e.getMessage());

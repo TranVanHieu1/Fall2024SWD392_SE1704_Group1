@@ -31,8 +31,8 @@ public class PaymentService {
     private final AccountRepository accountRepository;
 
     private static final Logger log = LoggerFactory.getLogger(PaymentService.class);
-    String vnp_TmnCode = "C0DZPJH8";
-    String vnp_HashSecret = "ZPQF7HG5PUJZVPPUG09WT6VFQ7X9GQAQ";
+    String vnp_TmnCode = "3N379WTD";
+    String vnp_HashSecret = "1CDS4VIWW8VWI65MZT5QV7ZN4TDADUXF";
     String vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
     // Sử dụng vnp_ReturnUrl từ PaymentService1
     String vnp_ReturnUrl = "http://localhost:8081/return-url";
@@ -53,23 +53,22 @@ public class PaymentService {
 
     public String createPayment(PaymentRequest request) {
         try {
-            int id = Integer.parseInt(SecurityContextHolder.getContext().getAuthentication().getName());
-
+            String userName = SecurityContextHolder.getContext().getAuthentication().getName();
             Map<String, String> vnp_Params = new HashMap<>();
             vnp_Params.put("vnp_Version", "2.1.0");
             vnp_Params.put("vnp_Command", "pay");
             vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
-            vnp_Params.put("vnp_Amount", String.valueOf(request.getTotal_price() * 100));
+            vnp_Params.put("vnp_Amount", String.valueOf(request.getTotalPrice() * 100));
             vnp_Params.put("vnp_CurrCode", "VND");
             vnp_Params.put("vnp_BankCode", "NCB");
             vnp_Params.put("vnp_TxnRef", String.valueOf(System.currentTimeMillis()));
-            vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang");
-            vnp_Params.put("vnp_OrderType", "billpayment");
+            vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang:" + vnp_Params.get("vnp_TxnRef"));
+            vnp_Params.put("vnp_OrderType", "other");
             vnp_Params.put("vnp_Locale", "vn");
             vnp_Params.put("vnp_ReturnUrl", vnp_ReturnUrl);
             vnp_Params.put("vnp_IpAddr", request.getIpAddr());
 
-            Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
+            Calendar cld = Calendar.getInstance(java.util.TimeZone.getTimeZone("Etc/GMT+7"));
             String vnp_CreateDate = new SimpleDateFormat("yyyyMMddHHmmss").format(cld.getTime());
             vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
             cld.add(Calendar.MINUTE, 15);
@@ -85,8 +84,12 @@ public class PaymentService {
                 String fieldName = itr.next();
                 String fieldValue = vnp_Params.get(fieldName);
                 if ((fieldValue != null) && (fieldValue.length() > 0)) {
-                    hashData.append(fieldName).append('=').append(URLEncoder.encode(fieldValue, StandardCharsets.UTF_8.toString()));
-                    query.append(URLEncoder.encode(fieldName, StandardCharsets.US_ASCII.toString())).append('=').append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
+                    hashData.append(fieldName);
+                    hashData.append('=');
+                    hashData.append(URLEncoder.encode(fieldValue, StandardCharsets.UTF_8.toString()));
+                    query.append(URLEncoder.encode(fieldName, StandardCharsets.US_ASCII.toString()));
+                    query.append('=');
+                    query.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
                     if (itr.hasNext()) {
                         query.append('&');
                         hashData.append('&');
@@ -96,12 +99,17 @@ public class PaymentService {
             String queryUrl = query.toString();
             String vnp_SecureHash = hmacSHA512(vnp_HashSecret, hashData.toString());
             queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
-            paymentTokens.put(String.valueOf(id), vnp_SecureHash);
+
+            // Lưu token của người dùng với transaction reference
+            paymentTokens.put(vnp_Params.get("vnp_TxnRef"), userName);
             return vnp_Url + "?" + queryUrl;
         } catch (Exception e) {
-            throw new RuntimeException("Payment failed!");
+            // Thêm log thông tin về lỗi
+            e.printStackTrace(); // Log lỗi vào console để xem chi tiết hơn
+            throw new RuntimeException("Payment failed due to: " + e.getMessage());
         }
     }
+
     public boolean verifyPayment(Map<String, String> params) {
         try {
             String vnp_SecureHash = params.get("vnp_SecureHash").toUpperCase();
