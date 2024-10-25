@@ -13,9 +13,7 @@ import java.util.Optional;
 @Repository
 public interface PondRepository extends JpaRepository<Ponds, Integer> {
 
-    Optional<Ponds> findByIdAndAccountId(int pondId, int accountId);
-
-    Ponds findByNamePondAndAccountId(String namePond, int id);
+    Ponds findByNamePond(String namePond);
 
     Ponds findById(int id);
 
