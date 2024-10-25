@@ -17,4 +17,5 @@ public class ItemResponse {
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
     private boolean isDeleted;
+    private String message;
 }

@@ -2,18 +2,15 @@ package com.group1.Care_Koi_System.service;
 
 import com.group1.Care_Koi_System.dto.Item.ItemRequest;
 import com.group1.Care_Koi_System.dto.Item.ItemResponse;
-import com.group1.Care_Koi_System.entity.Account;
-import com.group1.Care_Koi_System.entity.Enum.AccountRole;
 import com.group1.Care_Koi_System.entity.FoodItem;
 import com.group1.Care_Koi_System.entity.OrderDetail;
-import com.group1.Care_Koi_System.exceptionhandler.ErrorCode;
-import com.group1.Care_Koi_System.exceptionhandler.ResponseException;
-import com.group1.Care_Koi_System.exceptionhandler.SystemException;
+import com.group1.Care_Koi_System.exceptionhandler.OrderDetail.ItemNotFoundException;
+import com.group1.Care_Koi_System.exceptionhandler.OrderDetail.OutOfStockException;
 import com.group1.Care_Koi_System.repository.FoodItemRepository;
 import com.group1.Care_Koi_System.repository.OrderDetailRepository;
 import com.group1.Care_Koi_System.utils.AccountUtils;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -94,12 +91,12 @@ public class FoodItemService {
         //kiểm tra item có tồn tại không
         Optional<FoodItem> itemOptional = foodItemRepository.findById(itemId);
         if (itemOptional.isEmpty()) {
-            throw new RuntimeException("Item with ID " + itemId + " not found.");
+            throw new ItemNotFoundException("Item with ID " + itemId + " not found.");
         }
         FoodItem foodItem = itemOptional.get();
         //kiểm tra số lượng đặt hàng có lớn hơn số lượng tồn kho không
         if (foodItem.getQuantity() < quantity) {
-            throw new RuntimeException("Item with ID " + itemId + " is out of stock.");
+            throw new OutOfStockException("Item with ID " + itemId + " is out of stock.");
         }
         // Cap nhat so luong ton kho
         foodItem.setQuantity(foodItem.getQuantity() - quantity);
@@ -111,7 +108,23 @@ public class FoodItemService {
         orderDetail.setPrice(foodItem.getPrice() * quantity);
         // Lưu OrderDetail vào cơ sở dữ liệu
         orderDetailRepository.save(orderDetail);
-        return "Order successfully.";
+        return "Order placed  successfully.";
+    }
+    public void deleteItem(int id){
+        Optional<FoodItem> optionalFoodItem = foodItemRepository.findById(id);
+
+        // Kiểm tra xem món ăn có tồn tại không
+        if (optionalFoodItem.isPresent()) {
+            FoodItem foodItem = optionalFoodItem.get();
+            // Đánh dấu món ăn là đã bị xóa
+            foodItem.setDeleted(true);
+            // Cập nhật thời gian xóa
+            foodItem.setUpdateAt(LocalDateTime.now());
+            // Lưu thay đổi vào cơ sở dữ liệu
+            foodItemRepository.save(foodItem);
+        } else {
+            throw new EntityNotFoundException("Food item not found with id: " + id);
+        }
     }
 
     private ItemResponse convertToResponse(FoodItem foodItem) {
