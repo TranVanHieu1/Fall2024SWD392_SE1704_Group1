@@ -26,6 +26,8 @@ public class TicketResponse {
 
     private String message;
 
+    private boolean isResolved;
+
     public TicketResponse(int id, String name, String pondName, String fishName, String text) {
         this.id = id;
         this.name = name;
@@ -36,5 +38,14 @@ public class TicketResponse {
 
     public TicketResponse(String message) {
         this.message = message;
+    }
+
+    public TicketResponse(int id, String name, String pondName, String fishName, String text, boolean isResolved) {
+        this.id = id;
+        this.name = name;
+        this.pondName = pondName;
+        this.fishName = fishName;
+        this.text = text;
+        this.isResolved = isResolved;
     }
 }
