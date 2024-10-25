@@ -35,11 +35,11 @@ public class PondController {
     }
 
 
-   /* @PutMapping("update/{pondId}")
-    public ResponseEntity<ApiRes<PondResponse>> updatePond(@PathVariable int pondId, @RequestBody PondRequest request) {
+  /*  @PutMapping("update/{pondId}")
+    public ResponseEntity<ApiRes<PondResponse>> updatePond(@RequestBody @Valid PondRequest request) {
 
         int accountId = accountUtils.getCurrentAccount().getId();
-        Ponds updatedPond = pondService.updatePond(pondId, request, accountId);
+        Ponds updatedPond = pondService.updatePond(request);
 
         ApiRes<PondResponse> apiRes = new ApiRes<>();
         apiRes.setMessage("Update Successfully!");
