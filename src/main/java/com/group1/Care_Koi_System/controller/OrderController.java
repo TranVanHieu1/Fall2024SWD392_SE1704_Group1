@@ -30,7 +30,7 @@ public class OrderController {
 
     @GetMapping("/view-all")
     public ResponseEntity<List<Order>> viewAllOrders() {
-        Account account = accountUtils.getCurrentAccount();
-        return orderService.viewAllOrdersForAccount(account);
+        return orderService.viewAllOrdersForAccount();
     }
+
 }
