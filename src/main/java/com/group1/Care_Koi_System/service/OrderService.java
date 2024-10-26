@@ -49,7 +49,7 @@ public class OrderService {
             return new ResponseEntity<>(responseException, errorCode.getHttpStatus());
         }
     }
-    public ResponseEntity<List<Order>> viewOrdersForUser(Account account) {
+    public ResponseEntity<List<Order>> viewAllOrdersForAccount(Account account) {
         try {
             List<Order> orders;
 
