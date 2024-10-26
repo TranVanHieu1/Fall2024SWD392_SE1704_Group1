@@ -62,13 +62,11 @@ public class OrderService {
             orders = orders.stream()
                     .filter(order -> !order.isDeleted())
                     .collect(Collectors.toList());
-            if (orders != null && !orders.isEmpty()) {
-                return ResponseEntity.ok(orders);
-            } else {
-                return new ResponseEntity<>(List.of(), HttpStatus.NOT_FOUND);
-            }
+
+            return ResponseEntity.ok(orders);
+
         } catch (Exception e) {
-            return new ResponseEntity<>(List.of(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
