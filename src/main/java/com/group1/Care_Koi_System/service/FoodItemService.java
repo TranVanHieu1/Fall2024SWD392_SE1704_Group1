@@ -53,6 +53,7 @@ public class FoodItemService {
             foodItem.setCategory(itemRequest.getCategory());
             foodItem.setQuantity(itemRequest.getQuantity());
             foodItem.setUpdateAt(LocalDateTime.now());
+            foodItem.setDeleted(false);
 
             FoodItem updateFoodItem = foodItemRepository.save(foodItem);
             return Optional.of(convertToResponse(updateFoodItem));
