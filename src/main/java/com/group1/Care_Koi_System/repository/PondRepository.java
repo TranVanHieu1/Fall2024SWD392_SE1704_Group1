@@ -20,5 +20,7 @@ public interface PondRepository extends JpaRepository<Ponds, Integer> {
 
     List<Ponds> findByAccount(Account account);
 
-
+    @Query("SELECT p FROM Ponds p WHERE (:namePond IS NULL OR LOWER(p.namePond) LIKE LOWER(CONCAT('%', :namePond, '%'))) " +
+            "AND (:id IS NULL OR p.id = :id)")
+    List<Ponds> searchByNamePondAndIdPond(@Param("namePond") String namePond, @Param("id") Integer id);
 }

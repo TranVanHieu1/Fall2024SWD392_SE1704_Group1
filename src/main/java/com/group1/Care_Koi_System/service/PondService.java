@@ -225,7 +225,66 @@ public class PondService {
         }
     }
 
+    public PondSearchResponse searchPond(String namePond, Integer id) {
+        PondSearchResponse response = new PondSearchResponse();
 
+
+        List<Ponds> ponds = pondRepository.searchByNamePondAndIdPond(namePond, id);
+
+        if (ponds.isEmpty()) {
+            response.setMessage("No ponds found!");
+            response.setPondsList(Collections.emptyList());
+        } else {
+            List<PondResponse> pondResponses = ponds.stream()
+                    .map(pond -> {
+                        PondResponse pondResponse = new PondResponse();
+                        pondResponse.setNamePond(pond.getNamePond());
+                        pondResponse.setId(pond.getId());
+                        pondResponse.setSize(pond.getSize());
+                        pondResponse.setVolume(pond.getVolume());
+                        pondResponse.setImage(pond.getImage());
+                        pondResponse.setCreateAt(pond.getCreateAt());
+
+                        List<KoiFishResponse> koiFishResponses = pond.getKoiFishList().stream()
+                                .map(pondKoiFish -> {
+                                    KoiFishResponse koiFishResponse = new KoiFishResponse();
+                                    koiFishResponse.setId(pondKoiFish.getKoiFish().getId());
+                                    koiFishResponse.setFishName(pondKoiFish.getKoiFish().getFishName());
+                                    koiFishResponse.setSize(pondKoiFish.getKoiFish().getSize());
+                                    koiFishResponse.setWeigh(pondKoiFish.getKoiFish().getWeigh());
+                                    koiFishResponse.setDateAdded(pondKoiFish.getDateAdded());
+                                    return koiFishResponse;
+                                })
+                                .collect(Collectors.toList());
+
+                        pondResponse.setKoiFishList(koiFishResponses);
+
+                        List<WaterParameterResponse> waterParameterResponses = pond.getParameters().stream()
+                                .map(parameters -> {
+                                    WaterParameterResponse wpResponse = new WaterParameterResponse();
+                                    wpResponse.setPercentSalt(parameters.getPercentSalt());
+                                    wpResponse.setTemperature(parameters.getTemperature());
+                                    wpResponse.setPH(parameters.getPH());
+                                    wpResponse.setO2(parameters.getO2());
+                                    wpResponse.setNO2(parameters.getNO2());
+                                    wpResponse.setNO3(parameters.getNO3());
+                                    wpResponse.setCheckDate(parameters.getCheckDate());
+                                    return wpResponse;
+                                })
+                                .collect(Collectors.toList());
+
+                        pondResponse.setParameters(waterParameterResponses);
+
+                        return pondResponse;
+                    })
+                    .collect(Collectors.toList());
+
+            response.setMessage("Ponds retrieved successfully.");
+            response.setPondsList(pondResponses);
+        }
+
+        return response;
+    }
 }
 
 
