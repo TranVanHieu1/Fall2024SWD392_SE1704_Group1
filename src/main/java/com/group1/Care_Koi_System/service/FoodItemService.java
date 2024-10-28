@@ -120,6 +120,10 @@ public class FoodItemService {
             foodItem.setUpdateAt(LocalDateTime.now());
             // Lưu thay đổi vào cơ sở dữ liệu
             foodItemRepository.save(foodItem);
+            
+            foodItem.setDeleted(false);
+            foodItem.setUpdateAt(LocalDateTime.now());
+            foodItemRepository.save(foodItem);
         } else {
             throw new EntityNotFoundException("Food item not found with id: " + id);
         }
