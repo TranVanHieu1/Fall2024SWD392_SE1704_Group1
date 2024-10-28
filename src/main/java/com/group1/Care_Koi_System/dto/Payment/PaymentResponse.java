@@ -12,8 +12,9 @@ import java.util.Date;
 @AllArgsConstructor
 public class PaymentResponse {
     private int id;
+    private int orderId;
     private LocalDateTime paymentDate;
-    private double totalPrice;
+    private long totalPrice;
     private String details;
     private PaymentStatus status;
     private PaymentMethodEnum paymentMethod;

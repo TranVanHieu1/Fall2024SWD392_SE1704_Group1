@@ -28,11 +28,11 @@ public class PaymentController {
     }
 
     @GetMapping("/verify")
-    public ResponseEntity<String> verifyPayment(@RequestParam Map<String, String> paymentParams) {
+    public ResponseEntity<String> verifyPayment(@RequestParam Map<String, String> params) {
         try {
-            boolean isValid = paymentService.verifyPayment(paymentParams);
-            if (isValid) {
-                return ResponseEntity.ok("Payment verification successful.");
+            boolean isSuccess = paymentService.verifyPayment(params);
+            if (isSuccess) {
+                return ResponseEntity.ok("Payment success!");
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Payment verification failed.");
             }
