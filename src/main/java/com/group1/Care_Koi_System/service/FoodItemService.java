@@ -91,6 +91,9 @@ public class FoodItemService {
             throw new ItemNotFoundException("Item with ID " + itemId + " not found.");
         }
         FoodItem foodItem = itemOptional.get();
+        if (foodItem.isDeleted()) {
+            throw new IllegalStateException("This item is no longer available for purchase.");
+        }
         //kiểm tra số lượng đặt hàng có lớn hơn số lượng tồn kho không
         if (foodItem.getQuantity() < quantity) {
             throw new OutOfStockException("Item with ID " + itemId + " is out of stock.");
@@ -120,7 +123,7 @@ public class FoodItemService {
             foodItem.setUpdateAt(LocalDateTime.now());
             // Lưu thay đổi vào cơ sở dữ liệu
             foodItemRepository.save(foodItem);
-            
+
             foodItem.setDeleted(false);
             foodItem.setUpdateAt(LocalDateTime.now());
             foodItemRepository.save(foodItem);
@@ -128,6 +131,7 @@ public class FoodItemService {
             throw new EntityNotFoundException("Food item not found with id: " + id);
         }
     }
+
 
     private ItemResponse convertToResponse(FoodItem foodItem) {
         ItemResponse itemResponse = new ItemResponse();
