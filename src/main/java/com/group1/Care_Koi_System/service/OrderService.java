@@ -49,26 +49,30 @@ public class OrderService {
             return new ResponseEntity<>(responseException, errorCode.getHttpStatus());
         }
     }
-    public ResponseEntity<List<Order>> viewOrdersForUser(Account account) {
+    public ResponseEntity<List<Order>> viewAllOrdersForAccount() {
         try {
+            Account account = accountUtils.getCurrentAccount();
+            if (account == null) {
+                throw new SystemException(ErrorCode.NOT_LOGIN);
+            }
             List<Order> orders;
-
             if (account.getRole() == AccountRole.ADMIN || account.getRole() == AccountRole.SHOP) {
                 orders = orderRepository.findAll();
             } else {
                 orders = orderRepository.findByAccountId(account.getId());
             }
-
             orders = orders.stream()
                     .filter(order -> !order.isDeleted())
                     .collect(Collectors.toList());
-            if (orders != null && !orders.isEmpty()) {
-                return ResponseEntity.ok(orders);
-            } else {
-                return new ResponseEntity<>(List.of(), HttpStatus.NOT_FOUND);
-            }
+
+            return ResponseEntity.ok(orders);
+
+        } catch (SystemException ex) {
+            ErrorCode errorCode = ex.getErrorCode();
+            return new ResponseEntity<>(HttpStatus.valueOf(errorCode.getHttpStatus().value()));
         } catch (Exception e) {
-            return new ResponseEntity<>(List.of(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 }
