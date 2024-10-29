@@ -209,7 +209,7 @@ public class AccountService implements UserDetailsService {
             Account account =  accountUtils.getCurrentAccount();
             if(account == null) {
                 throw new SystemException(ErrorCode.NOT_LOGIN);
-            } else if (!account.getRole().equals(AccountRole.ADMIN)) {
+            } else if (!account.getRole().equals(AccountRole.MEMBER)) {
                 throw new SystemException(ErrorCode.ACCOUNT_NOT_ADMIN);
             }
 
