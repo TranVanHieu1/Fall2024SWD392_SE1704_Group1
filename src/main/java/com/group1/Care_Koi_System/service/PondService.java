@@ -65,12 +65,17 @@ public class PondService {
             }
 
             Ponds pond = new Ponds();
+            pond.setAccount(account);
             pond.setNamePond(request.getNamePond());
             pond.setImage(request.getImage());
             pond.setSize(request.getSize());
             pond.setHeight(request.getHeight());
-            double volume = request.getSize() * request.getHeight();
+            double volume = 0;
+            volume = request.getSize() * request.getHeight();
             pond.setVolume(volume);
+            int maximum = 0;
+            maximum = (int)volume * 2;
+            pond.setMaximum((maximum));
             pond.setCreateAt(LocalDateTime.now());
 
 
@@ -97,7 +102,6 @@ public class PondService {
             if(existingPond == null) {
                 throw new SystemException(ErrorCode.POND_NOT_FOUND);
             }
-
 
             if (request.getNamePond() == null || request.getNamePond().isEmpty()) {
                 throw new AuthAppException(ErrorCode.INVALID_POND_NAME);
