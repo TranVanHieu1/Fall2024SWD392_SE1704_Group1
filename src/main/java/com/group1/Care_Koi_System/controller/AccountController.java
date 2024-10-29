@@ -60,4 +60,9 @@ public class AccountController {
     public ResponseEntity<DashBoardResponse> getDashBoard(){
         return  accountService.dashBoard();
     }
+
+    @GetMapping("get-profile")
+    public ResponseEntity<AccountResponse> getProfile(){
+        return  accountService.getProfile();
+    }
 }

@@ -89,17 +89,21 @@ public class AccountService implements UserDetailsService {
 
             Account account = new Account();
             account.setEmail(registerRequest.getEmail());
+            account.setUserName(registerRequest.getUsername());
             account.setPassWord(passwordEncoder.encode(registerRequest.getPassword()));
             account.setRole(AccountRole.MEMBER);
             account.setStatus(AccountStatus.VERIFIED);
             account.setCreateAt(LocalDateTime.now());
             account.setProvider(AccountProviderEnum.LOCAL);
+            account.setPhone("default");
+            account.setAddress("default");
+            account.setGender(GenderEnum.MALE);
             account.setDeleted(false);
             accountRepository.save(account);
             String token = jwtService.generateToken(account.getEmail());
             account.setTokens(token);
             return new RegisReponse("Registered successfully!");
-        }catch (AuthAppException ex){
+        }catch (AccountException ex){
             throw new AccountException(ex.getErrorCode());
         }
 
@@ -294,7 +298,9 @@ public class AccountService implements UserDetailsService {
             int countPond = 0;
             int countUser = 0;
             int countFish = 0;
-            countUser = accountRepository.findAll().size();
+            if(account.getRole().equals(AccountRole.ADMIN)){
+                countUser = accountRepository.findAll().size();
+            }
             List<Ponds> pondsList = pondRepository.findByAccount(account);
             countPond = pondsList.size();
 
@@ -322,5 +328,30 @@ public class AccountService implements UserDetailsService {
             DashBoardResponse respon = new DashBoardResponse(ex.getMessage());
             return new ResponseEntity<>(respon, errorCode.getHttpStatus());
         }
+    }
+
+    public ResponseEntity<AccountResponse> getProfile(){
+        try{
+            Account account =  accountUtils.getCurrentAccount();
+            if(account == null) {
+                throw new SystemException(ErrorCode.NOT_LOGIN);
+            }
+
+            AccountResponse accountResponse = new AccountResponse(
+
+                    account.getUsername(),
+                    account.getEmail(),
+                    account.getAddress(),
+                    account.getPhone(),
+                    account.getGender()
+            );
+            return new ResponseEntity<>(accountResponse, HttpStatus.OK);
+
+        }catch (SystemException ex){
+            ErrorCode errorCode = ex.getErrorCode();
+            AccountResponse responseException = new AccountResponse(ex.getMessage());
+            return  new ResponseEntity<>(responseException, errorCode.getHttpStatus());
+        }
+
     }
 }
