@@ -6,15 +6,23 @@ import com.group1.Care_Koi_System.dto.Payment.PaymentResponse;
 import com.group1.Care_Koi_System.entity.Account;
 import com.group1.Care_Koi_System.entity.Enum.PaymentMethodEnum;
 import com.group1.Care_Koi_System.entity.Enum.PaymentStatus;
+import com.group1.Care_Koi_System.entity.Order;
+import com.group1.Care_Koi_System.entity.OrderDetail;
 import com.group1.Care_Koi_System.entity.Payment;
 import com.group1.Care_Koi_System.repository.AccountRepository;
+import com.group1.Care_Koi_System.repository.OrderDetailRepository;
+import com.group1.Care_Koi_System.repository.OrderRepository;
 import com.group1.Care_Koi_System.repository.PaymentRepository;
+import com.group1.Care_Koi_System.utils.AccountUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.Mac;
@@ -34,6 +42,11 @@ import java.util.stream.Collectors;
 public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final AccountRepository accountRepository;
+    private final OrderRepository orderRepository;
+
+    @Autowired
+    private AccountUtils accountUtils;
+
 
     private static final Logger log = LoggerFactory.getLogger(PaymentService.class);
     String vnp_TmnCode = "3N379WTD";
@@ -47,7 +60,6 @@ public class PaymentService {
         return paymentRepository.findAll().stream()
                 .map(payment -> new PaymentResponse(
                         payment.getId(),
-                        payment.getOrder().getId(),
                         payment.getPaymentDate(),
                         payment.getTotalPrice(),
                         payment.getDetails(),
@@ -59,7 +71,8 @@ public class PaymentService {
 
     public String createPayment(PaymentRequest request) {
         try {
-            String email = SecurityContextHolder.getContext().getAuthentication().getName();
+            String username = SecurityContextHolder.getContext().getAuthentication().getName();
+//            int orderId= Integer.parseInt(request.getOrderId());
             Map<String, String> vnp_Params = new HashMap<>();
             vnp_Params.put("vnp_Version", "2.1.0");
             vnp_Params.put("vnp_Command", "pay");
@@ -105,15 +118,16 @@ public class PaymentService {
 
             String queryUrl = query.toString();
             String vnp_SecureHash = hmacSHA512(vnp_HashSecret, hashData.toString());
-            Account account = accountRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
             queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
-
+            Account account = accountUtils.getCurrentAccount();
             // Lưu token của người dùng với transaction reference
             paymentTokens.put(vnp_Params.get("vnp_TxnRef"), account.getUsername());
+//            Order order = orderRepository.findById(orderId);
+//            paymentTokens.put(vnp_Params.get("vnp_TxnRef"), String.valueOf(order.getId()));
             return vnp_Url + "?" + queryUrl;
         } catch (Exception e) {
             // Thêm log thông tin về lỗi
-            e.printStackTrace(); // Log lỗi vào console để xem chi tiết hơn
+            log.error("Error occurred during payment creation: " + e.getMessage(), e);
             throw new RuntimeException("Payment failed due to: " + e.getMessage());
         }
 
@@ -151,28 +165,27 @@ public class PaymentService {
             log.error("Error while verifying payment hash", e);
             return false;
         }
-        String responseCode = params.get("vnp_ResponseCode");
-        if ("00".equals(responseCode)) {
-            System.out.println("Payment success!");
-            String email = SecurityContextHolder.getContext().getAuthentication().getName();
-            Account account = accountRepository.findByEmail(email)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if ("00".equals(params.get("vnp_ResponseCode"))) {
+            Account account = accountUtils.getCurrentAccount();
+            String userName = account.getUsername();
             long amount = Long.parseLong(params.get("vnp_Amount")) / 100;
-            System.out.println("Amount: " + amount);
+//            int orderId= Integer.parseInt(params.get("vnp_TxnRef"));
+//            Order order = orderRepository.findById(orderId);
+//            orderRepository.save(order);
 
             Payment payment = new Payment();
-            payment.setId(account.getId());
             payment.setPaymentDate(LocalDateTime.now());
             payment.setTotalPrice(amount);
-            payment.setPaymentMethod(PaymentMethodEnum.valueOf(params.get("vnp_PayType")));
-            payment.setDetails(params.toString());
-            payment.setStatus(PaymentStatus.valueOf("SUCCESS"));
+            payment.setDetails("Thanh toan don hang");
+            payment.setStatus(PaymentStatus.COMPLETED);
+            payment.setPaymentMethod(PaymentMethodEnum.BANK);
             paymentRepository.save(payment);
 
             accountRepository.save(account);
             return true;
         } else {
-            log.info("Response code is not 00. Actual response: {}", responseCode);
+            log.info("Response code is not 00.");
         }
         return false;
     }
