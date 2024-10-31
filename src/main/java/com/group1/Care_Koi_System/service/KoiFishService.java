@@ -245,7 +245,8 @@ public class KoiFishService {
                 throw new SystemException(ErrorCode.NOT_LOGIN);
             }
 
-            List<Ponds> pondsList = pondRepository.findByAccount(account);
+            List<Ponds> pondsList = pondRepository.findByAccount(account).stream()
+                    .filter(ponds -> !ponds.isDeleted()).toList();
             if(pondsList == null){
                 throw new SystemException(ErrorCode.EMPTY);
             }
