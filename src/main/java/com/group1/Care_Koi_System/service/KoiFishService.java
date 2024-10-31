@@ -169,7 +169,13 @@ public class KoiFishService {
         feeding.setFoodType(foodType);
         feeding.setFeedingTime(LocalDateTime.now());
 
-        feeding.setAmount(calculateFoodAmount(fishCount, pondSize, foodType).doubleValue());
+        //tinh toan so lg thuc an co ban
+        BigDecimal baseAmount = calculateFoodAmount(fishCount, pondSize, foodType);
+
+        //dieu chinh so lg thuc an tren size cua ao
+        BigDecimal adjustedAmount = adjustFoodForPondSize(baseAmount, pondSize);
+
+        feeding.setAmount(adjustedAmount.doubleValue());
         return feeding;
     }
 
