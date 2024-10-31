@@ -34,6 +34,7 @@ public class PondController {
         return pondService.createPond(request);
     }
 
+
     @PutMapping("update/{pondId}")
     public ResponseEntity<ResponseException> updatePond(@PathVariable int pondId, @RequestBody PondRequest request) {
         return pondService.updatePond(pondId, request);
@@ -54,5 +55,12 @@ public class PondController {
         return  pondService.getAllPonds();
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<PondSearchResponse> searchPond(
+            @RequestParam(required = false) String namePond,
+            @RequestParam(required = false) Integer id) {
+        PondSearchResponse response = pondService.searchPond(namePond, id);
+        return ResponseEntity.ok(response);
+    }
 }
 

@@ -63,7 +63,6 @@ public class Ponds {
     @JsonIgnore
     private List<WaterParameter> parameters;
 
-
     @Column
     private LocalDateTime createAt;
 }

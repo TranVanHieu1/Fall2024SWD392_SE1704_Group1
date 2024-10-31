@@ -136,7 +136,8 @@ public class TicketService {
                         ticket.getName(),
                         ticket.getPonds().getNamePond(),
                         ticket.getKoiFish().getFishName(),
-                        ticket.getText()
+                        ticket.getText(),
+                        ticket.isResolved()
                 ));
             }
             return new ResponseEntity<>(tickets, HttpStatus.OK);
