@@ -49,7 +49,7 @@ public class TicketService {
             Ponds pond = pondRepository.findById(pondId);
             KoiFish koiFish = koiFishRepository.findById(fishId);
 
-            if (pond == null || koiFish == null) {
+            if (pond == null || koiFish == null || pond.isDeleted() || koiFish.isDeleted()) {
                 throw new SystemException(ErrorCode.INVALIDPONDANDFISH);
             }
 
@@ -163,13 +163,17 @@ public class TicketService {
 
             List<Ticket> listTicket = new ArrayList<>();
 
-            for(Ponds pond : pondsList){
-                listTicket = pond.getListTicket().stream()
-                        .filter(ticket -> !ticket.isDeleted() && !ticket.isResolved()).toList();
+            for (Ponds pond : pondsList) {
+                List<Ticket> filteredTickets = pond.getListTicket().stream()
+                        .filter(ticket -> !ticket.isDeleted() && !ticket.isResolved())
+                        .toList();
+                listTicket.addAll(filteredTickets);
             }
+
             if (listTicket.isEmpty()) {
                 throw new SystemException(ErrorCode.EMPTY);
             }
+
             List<TicketResponse> tickets = new ArrayList<>();
             for (Ticket ticket : listTicket) {
 
