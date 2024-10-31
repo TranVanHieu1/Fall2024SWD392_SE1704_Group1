@@ -181,7 +181,9 @@ public class PondService {
 
                 List<Pond_KoiFish> pondKoiFish = pond_koiFishRepository.findKoiFishByPondsId(pond.getId());
                 List<String> fishName = pondKoiFish.stream()
-                        .map(koiFish -> koiFish.getKoiFish().getFishName()).toList();
+                        .filter(koiFish -> !koiFish.getKoiFish().isDeleted()) // Filter non-deleted fish
+                        .map(koiFish -> koiFish.getKoiFish().getFishName())   // Map to fish names
+                        .toList();
                 ponds.add(new ViewPondResponse(
                         pond.getId(),
                         pond.getNamePond(),
@@ -214,7 +216,9 @@ public class PondService {
 
                 List<Pond_KoiFish> pondKoiFish = pond_koiFishRepository.findKoiFishByPondsId(pond.getId());
                 List<String> fishName = pondKoiFish.stream()
-                        .map(koiFish -> koiFish.getKoiFish().getFishName()).toList();
+                        .filter(koiFish -> !koiFish.getKoiFish().isDeleted()) // Filter non-deleted fish
+                        .map(koiFish -> koiFish.getKoiFish().getFishName())   // Map to fish names
+                        .toList();
                 ponds.add(new ViewPondResponse(
                         pond.getId(),
                         pond.getNamePond(),
