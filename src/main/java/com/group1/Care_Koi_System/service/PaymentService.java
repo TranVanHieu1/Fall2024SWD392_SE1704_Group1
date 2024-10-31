@@ -7,10 +7,8 @@ import com.group1.Care_Koi_System.entity.Account;
 import com.group1.Care_Koi_System.entity.Enum.PaymentMethodEnum;
 import com.group1.Care_Koi_System.entity.Enum.PaymentStatus;
 import com.group1.Care_Koi_System.entity.Order;
-import com.group1.Care_Koi_System.entity.OrderDetail;
 import com.group1.Care_Koi_System.entity.Payment;
 import com.group1.Care_Koi_System.repository.AccountRepository;
-import com.group1.Care_Koi_System.repository.OrderDetailRepository;
 import com.group1.Care_Koi_System.repository.OrderRepository;
 import com.group1.Care_Koi_System.repository.PaymentRepository;
 import com.group1.Care_Koi_System.utils.AccountUtils;
@@ -21,8 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.Mac;
@@ -63,6 +59,7 @@ public class PaymentService {
                         payment.getPaymentDate(),
                         payment.getTotalPrice(),
                         payment.getDetails(),
+//                        payment.getOrder().getId(),
                         payment.getStatus(),
                         payment.getPaymentMethod()
                 ))
@@ -122,8 +119,6 @@ public class PaymentService {
             Account account = accountUtils.getCurrentAccount();
             // Lưu token của người dùng với transaction reference
             paymentTokens.put(vnp_Params.get("vnp_TxnRef"), account.getUsername());
-//            Order order = orderRepository.findById(orderId);
-//            paymentTokens.put(vnp_Params.get("vnp_TxnRef"), String.valueOf(order.getId()));
             return vnp_Url + "?" + queryUrl;
         } catch (Exception e) {
             // Thêm log thông tin về lỗi
@@ -170,14 +165,17 @@ public class PaymentService {
             Account account = accountUtils.getCurrentAccount();
             String userName = account.getUsername();
             long amount = Long.parseLong(params.get("vnp_Amount")) / 100;
-//            int orderId= Integer.parseInt(params.get("vnp_TxnRef"));
-//            Order order = orderRepository.findById(orderId);
-//            orderRepository.save(order);
-
+//            Order order = orderRepository.findById(orderId)
+//                    .orElseThrow(() -> new IllegalArgumentException("No order found for ID: " + orderId));
+//
+//            if (!order.getAccount().equals(account)) {
+//                throw new IllegalArgumentException("Order does not belong to the authenticated account.");
+//            }
             Payment payment = new Payment();
             payment.setPaymentDate(LocalDateTime.now());
             payment.setTotalPrice(amount);
             payment.setDetails("Thanh toan don hang");
+//            payment.setOrder(order);
             payment.setStatus(PaymentStatus.COMPLETED);
             payment.setPaymentMethod(PaymentMethodEnum.BANK);
             paymentRepository.save(payment);

@@ -15,6 +15,7 @@ public class PaymentResponse {
     private LocalDateTime paymentDate;
     private long totalPrice;
     private String details;
+//    private int orderId;
     private PaymentStatus status;
     private PaymentMethodEnum paymentMethod;
 }
