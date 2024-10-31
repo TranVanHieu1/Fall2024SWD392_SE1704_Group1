@@ -38,16 +38,27 @@ public class FoodItemController {
         Optional<ItemResponse> updatedItem = foodItemService.updateItem(id, itemRequest);
         return updatedItem.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
+
     @PutMapping("/{id}")
     public ResponseEntity<ItemResponse> editItem(@PathVariable int id, @RequestBody ItemRequest itemRequest) {
         Optional<ItemResponse> updatedItem = foodItemService.updateItem(id, itemRequest);
         return updatedItem.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
+
     @PostMapping("/order/{itemID}")
     public ResponseEntity<String> orderItem(@PathVariable int itemID, @RequestParam int quantity) {
-        String message = foodItemService.orderItem(itemID, quantity);
-        return ResponseEntity.ok(message);
+        try {
+            foodItemService.orderItem(itemID, quantity);
+            return ResponseEntity.ok("Purchase successful.");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Item not found.");
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred.");
+        }
     }
+
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteFoodItem(@PathVariable int id) {
         try {
