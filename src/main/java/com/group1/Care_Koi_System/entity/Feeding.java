@@ -1,5 +1,7 @@
 package com.group1.Care_Koi_System.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.group1.Care_Koi_System.entity.Enum.FoodType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -13,6 +15,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class Feeding {
 
     @Id
