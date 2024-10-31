@@ -42,13 +42,10 @@ public class KoiFishController {
     @PostMapping("/calculate-food")
     public ResponseEntity<Feeding> calculateFood(
             @RequestParam int idPond,
-            @RequestParam @Valid FoodType foodType,
-            @RequestParam int fishCount,
-            @RequestParam double pondSize) {
+            @RequestParam @Valid FoodType foodType)
+            {
 
-        BigDecimal pondSizeDecimal = BigDecimal.valueOf(pondSize);
-
-        Feeding feeding = koiFishService.calculateFood(idPond, foodType, fishCount, pondSizeDecimal);
+        Feeding feeding = koiFishService.calculateFood(idPond, foodType);
         return ResponseEntity.ok(feeding);
     }
 

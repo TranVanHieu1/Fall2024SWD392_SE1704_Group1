@@ -10,9 +10,7 @@ import com.group1.Care_Koi_System.exceptionhandler.ErrorCode;
 import com.group1.Care_Koi_System.exceptionhandler.KoiFish.KoiFishException;
 import com.group1.Care_Koi_System.exceptionhandler.ResponseException;
 import com.group1.Care_Koi_System.exceptionhandler.SystemException;
-import com.group1.Care_Koi_System.repository.KoiFishRepository;
-import com.group1.Care_Koi_System.repository.PondRepository;
-import com.group1.Care_Koi_System.repository.Pond_KoiFishRepository;
+import com.group1.Care_Koi_System.repository.*;
 import com.group1.Care_Koi_System.utils.AccountUtils;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,20 +40,25 @@ public class KoiFishService {
     private PondRepository pondRepository;
 
     @Autowired
-    private Pond_KoiFishRepository pond_koiFishRepository;
+    private Pond_FeedingRepository pondFeedingRepository;
+
+    @Autowired Pond_KoiFishRepository pond_koiFishRepository;
+
+    @Autowired
+    private FeedingRepository feedingRepository;
 
     public ResponseEntity<KoiFishResponse> createKoiFish(KoiFishRequest koiFishRequest, KoiSpecies species,
-                                                         KoiGender gender, KoiOrigin origin, HealthyStatus healthyStatus,  int pondID) {
+                                                         KoiGender gender, KoiOrigin origin, HealthyStatus healthyStatus, int pondID) {
 
         try {
             Account account = accountUtils.getCurrentAccount();
-            if(account == null){
+            if (account == null) {
                 throw new KoiFishException(ErrorCode.NOT_LOGIN);
             }
 
             //find ponds by id
             Ponds ponds = pondRepository.findById(pondID);
-            if(ponds == null){
+            if (ponds == null) {
                 throw new KoiFishException(ErrorCode.INVALIDPOND);
             }
 
@@ -155,7 +158,7 @@ public class KoiFishService {
             return new ResponseEntity<>("Koi fish not found", HttpStatus.NOT_FOUND);
         }
         KoiFish koiFish = koiFishOptional;
-        
+
         koiFish.setDeleted(true);
 
         koiFishRepository.save(koiFish);
@@ -163,11 +166,27 @@ public class KoiFishService {
         return new ResponseEntity<>("Koi fish marked as deleted successfully", HttpStatus.OK);
     }
 
-    public Feeding calculateFood(int idPond, FoodType foodType, int fishCount, BigDecimal pondSize) {
+    public Feeding calculateFood(int idPond, FoodType foodType) {
         Feeding feeding = new Feeding();
-        feeding.setId(idPond);
+        Pond_Feeding pondFeeding = new Pond_Feeding();
+
+
         feeding.setFoodType(foodType);
         feeding.setFeedingTime(LocalDateTime.now());
+
+        Ponds pond = pondRepository.findById(idPond);
+
+        int fishCount = 0;
+        BigDecimal pondSize = BigDecimal.valueOf(0.0);
+
+        List<Pond_KoiFish> pondKoiFish = pond.getKoiFishList();
+        pondSize = BigDecimal.valueOf(pond.getSize());
+        for (Pond_KoiFish pond_koiFish : pondKoiFish) {
+            KoiFish fish = pond_koiFish.getKoiFish();
+            if (fish != null) {
+                fishCount++;
+            }
+        }
 
         //tinh toan so lg thuc an co ban
         BigDecimal baseAmount = calculateFoodAmount(fishCount, pondSize, foodType);
@@ -176,6 +195,11 @@ public class KoiFishService {
         BigDecimal adjustedAmount = adjustFoodForPondSize(baseAmount, pondSize);
 
         feeding.setAmount(adjustedAmount.doubleValue());
+
+        feedingRepository.save(feeding);
+        pondFeeding.setFeeding(feeding);
+        pondFeeding.setPonds(pond);
+        pondFeedingRepository.save(pondFeeding);
         return feeding;
     }
 
@@ -213,11 +237,11 @@ public class KoiFishService {
             List<KoiFish> koiFishList = koiFishRepository.findAll().stream()
                     .filter(fish -> !fish.isDeleted()).toList();
 
-            if(koiFishList.isEmpty()){
+            if (koiFishList.isEmpty()) {
                 throw new SystemException(ErrorCode.EMPTY);
             }
             List<KoiFishResponse> fishs = new ArrayList<>();
-            for(KoiFish fish: koiFishList){
+            for (KoiFish fish : koiFishList) {
 
                 Pond_KoiFish pondKoiFish = pond_koiFishRepository.findPondsByKoiFishId(fish.getId());
                 fishs.add(new KoiFishResponse(
@@ -247,19 +271,19 @@ public class KoiFishService {
         try {
 
             Account account = accountUtils.getCurrentAccount();
-            if(account == null){
+            if (account == null) {
                 throw new SystemException(ErrorCode.NOT_LOGIN);
             }
 
             List<Ponds> pondsList = pondRepository.findByAccount(account).stream()
                     .filter(ponds -> !ponds.isDeleted()).toList();
-            if(pondsList == null){
+            if (pondsList == null) {
                 throw new SystemException(ErrorCode.EMPTY);
             }
             List<KoiFishResponse> fishs = new ArrayList<>();
-            for(Ponds pond : pondsList){
+            for (Ponds pond : pondsList) {
                 List<Pond_KoiFish> pondKoiFish = pond.getKoiFishList();
-                for(Pond_KoiFish pond_koiFish : pondKoiFish){
+                for (Pond_KoiFish pond_koiFish : pondKoiFish) {
                     KoiFish fish = pond_koiFish.getKoiFish();
                     Pond_KoiFish pondKoi = pond_koiFishRepository.findPondsByKoiFishId(fish.getId());
                     fishs.add(new KoiFishResponse(
@@ -278,7 +302,7 @@ public class KoiFishService {
                     ));
                 }
             }
-            if(fishs.isEmpty()){
+            if (fishs.isEmpty()) {
                 throw new SystemException(ErrorCode.EMPTY);
             }
 
