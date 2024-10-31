@@ -6,6 +6,7 @@ import com.group1.Care_Koi_System.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -28,16 +29,25 @@ public class PaymentController {
     }
 
     @GetMapping("/verify")
-    public ResponseEntity<String> verifyPayment(@RequestParam Map<String, String> paymentParams) {
+    public ResponseEntity<String> verifyPayment(@RequestParam Map<String, String> params) {
         try {
-            boolean isValid = paymentService.verifyPayment(paymentParams);
-            if (isValid) {
-                return ResponseEntity.ok("Payment verification successful.");
+            boolean isSuccess = paymentService.verifyPayment(params);
+            if (isSuccess) {
+                return ResponseEntity.ok("Payment success!");
             } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Payment verification failed.");
+                return ResponseEntity.ok("Payment verification failed!");
             }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error verifying payment: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Payment verification failed: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/history")
+    public ResponseEntity<?> getPaymentHistory() {
+        try {
+            return ResponseEntity.ok(paymentService.getPaymentHistory());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error getting payment history: " + e.getMessage());
         }
     }
 

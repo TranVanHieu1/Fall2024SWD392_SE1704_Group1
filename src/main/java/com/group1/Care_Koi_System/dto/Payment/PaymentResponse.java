@@ -13,8 +13,9 @@ import java.util.Date;
 public class PaymentResponse {
     private int id;
     private LocalDateTime paymentDate;
-    private double totalPrice;
+    private long totalPrice;
     private String details;
+//    private int orderId;
     private PaymentStatus status;
     private PaymentMethodEnum paymentMethod;
 }
