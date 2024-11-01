@@ -43,7 +43,8 @@ public class KoiFishService {
     @Autowired
     private Pond_FeedingRepository pondFeedingRepository;
 
-    @Autowired Pond_KoiFishRepository pond_koiFishRepository;
+    @Autowired
+    Pond_KoiFishRepository pond_koiFishRepository;
 
     @Autowired
     private FeedingRepository feedingRepository;
@@ -122,10 +123,11 @@ public class KoiFishService {
 
         Ponds ponds = pondRepository.findById(pondId);
 
-        if(pondId != pondKoiFish.getPonds().getId()){
+        if (pondId != pondKoiFish.getPonds().getId()) {
+            pondKoiFish.setPonds(ponds);
             pondKoiFish.setEndDate(LocalDateTime.now());
             pondKoiFish.setMessage("Move from " + pondKoiFish.getPonds().getNamePond() + " to " + ponds.getNamePond());
-        }else{
+        } else {
             pondKoiFish.setUpdateDate(LocalDateTime.now());
         }
 
@@ -335,27 +337,28 @@ public class KoiFishService {
         }
     }
 
-    public ResponseEntity<?> getHistory(int koiFishID){
-        try{
+    public ResponseEntity<?> getHistory(int koiFishID) {
+        try {
             Account account = accountUtils.getCurrentAccount();
             if (account == null) {
                 throw new SystemException(ErrorCode.NOT_LOGIN);
             }
 
             List<Pond_KoiFish> histo = pond_koiFishRepository.findByKoiFishId(koiFishID);
-            if(histo.isEmpty()){
+            if (histo.isEmpty()) {
                 throw new SystemException(ErrorCode.EMPTY);
             }
 
             List<HistoryResponse> responses = new ArrayList<>();
 
-            for(Pond_KoiFish fish : histo){
+            for (Pond_KoiFish fish : histo) {
                 String fishname = fish.getKoiFish().getFishName();
                 responses.add(new HistoryResponse(
                         fish.getId(),
                         fishname,
                         fish.getDateAdded(),
-                        fish.getEndDate()
+                        fish.getEndDate(),
+                        fish.getMessage()
                 ));
             }
             if (responses.isEmpty()) {
@@ -363,7 +366,7 @@ public class KoiFishService {
             }
 
             return new ResponseEntity<>(responses, HttpStatus.OK);
-        }catch (SystemException ex){
+        } catch (SystemException ex) {
             ErrorCode errorCode = ex.getErrorCode();
             ResponseException respon = new ResponseException(ex.getMessage());
             return new ResponseEntity<>(respon, errorCode.getHttpStatus());
@@ -398,6 +401,42 @@ public class KoiFishService {
             if (fishs.isEmpty()) {
                 throw new SystemException(ErrorCode.EMPTY);
             }
+
+            return new ResponseEntity<>(fishs, HttpStatus.OK);
+        } catch (SystemException ex) {
+            ErrorCode errorCode = ex.getErrorCode();
+            ResponseException respon = new ResponseException(ex.getMessage());
+            return new ResponseEntity<>(respon, errorCode.getHttpStatus());
+        }
+    }
+
+    public ResponseEntity<?> getKoiFishByID(int fishID) {
+        try {
+
+            Account account = accountUtils.getCurrentAccount();
+            if (account == null) {
+                throw new SystemException(ErrorCode.NOT_LOGIN);
+            }
+
+            KoiFish fish = koiFishRepository.findById(fishID);
+            if (fish == null) {
+                throw new SystemException(ErrorCode.EMPTY);
+            }
+            Pond_KoiFish pondKoi = pond_koiFishRepository.findPondsByKoiFishId(fish.getId());
+            KoiFishResponse fishs = new KoiFishResponse(
+                    fish.getId(),
+                    fish.getFishName(),
+                    fish.getImageFish(),
+                    fish.getBirthDay(),
+                    fish.getSpecies(),
+                    fish.getSize(),
+                    fish.getWeigh(),
+                    fish.getGender(),
+                    fish.getOrigin(),
+                    fish.getHealthyStatus(),
+                    fish.getNote(),
+                    pondKoi.getPonds().getId()
+            );
 
             return new ResponseEntity<>(fishs, HttpStatus.OK);
         } catch (SystemException ex) {

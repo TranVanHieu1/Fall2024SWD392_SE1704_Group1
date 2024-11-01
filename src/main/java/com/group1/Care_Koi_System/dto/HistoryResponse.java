@@ -7,7 +7,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Data
-@AllArgsConstructor
+
 @NoArgsConstructor
 @Getter
 @Setter
@@ -27,10 +27,11 @@ public class HistoryResponse {
         this.message = message;
     }
 
-    public HistoryResponse(int fishID, String name, LocalDateTime addDate, LocalDateTime endDate) {
+    public HistoryResponse(int fishID, String name, LocalDateTime addDate, LocalDateTime endDate, String message) {
         this.fishID = fishID;
         this.name = name;
         this.addDate = addDate;
         this.endDate = endDate;
+        this.message = message;
     }
 }
