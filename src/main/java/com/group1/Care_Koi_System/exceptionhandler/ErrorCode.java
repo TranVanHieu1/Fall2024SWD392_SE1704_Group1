@@ -91,6 +91,8 @@ public enum ErrorCode {
     //Pond
 
     POND_ALREADY_EXISTS(7004,"The pond already exists." , HttpStatus.CONFLICT),
+    INVALID_SIZE(7004, "Size of pond must be greater than 2m²", HttpStatus.BAD_REQUEST),
+    INVALID_HEIGHT(7004, "Height of pond must be greater than 0.8m", HttpStatus.BAD_REQUEST),
     INVALID_POND_NAME(7005,"Invalid Name Pond",HttpStatus.NOT_FOUND),
     POND_NOT_FOUND(7006,"Pond Not Found!" , HttpStatus.NOT_FOUND),
     INVALIDPOND(7006,"You have to create a pond before add fish or you have to select pond!" , HttpStatus.NOT_FOUND),

@@ -55,12 +55,11 @@ public class PondController {
         return  pondService.getAllPonds();
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<PondSearchResponse> searchPond(
-            @RequestParam(required = false) String namePond,
-            @RequestParam(required = false) Integer id) {
-        PondSearchResponse response = pondService.searchPond(namePond, id);
-        return ResponseEntity.ok(response);
+
+
+    @GetMapping("view-pond-by-id/{pondID}")
+    public ResponseEntity<?> viewPondById(@PathVariable int pondID){
+        return pondService.getPondByID(pondID);
     }
 }
 

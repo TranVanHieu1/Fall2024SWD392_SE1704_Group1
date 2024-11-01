@@ -73,4 +73,9 @@ public class KoiFishResponse {
         this.message = message;
     }
 
+    public KoiFishResponse(int id, String fishName, int pondID) {
+        this.id = id;
+        this.fishName = fishName;
+        this.pondID = pondID;
+    }
 }

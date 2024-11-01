@@ -33,4 +33,10 @@ public class Pond_KoiFish {
 
     @Column(name ="end_date")
     private LocalDateTime endDate;
+
+    @Column(name = "update_date")
+    private LocalDateTime updateDate;
+
+    @Column(name = "message")
+    private String message;
 }

@@ -1,5 +1,6 @@
 package com.group1.Care_Koi_System.service;
 
+import com.group1.Care_Koi_System.dto.HistoryResponse;
 import com.group1.Care_Koi_System.dto.KoiFish.KoiFishRequest;
 import com.group1.Care_Koi_System.dto.KoiFish.KoiFishResponse;
 import com.group1.Care_Koi_System.dto.Pond.ViewPondResponse;
@@ -110,27 +111,40 @@ public class KoiFishService {
         }
     }
 
-    public KoiFishResponse updateKoiFish(int id, KoiFishRequest koiFishRequest, KoiSpecies species,
+    public KoiFishResponse updateKoiFish(int pondId, int fishID, KoiFishRequest koiFishRequest, KoiSpecies species,
                                          KoiGender gender, KoiOrigin origin, HealthyStatus healthyStatus) {
-        KoiFish optionalKoiFish = koiFishRepository.findById(id);
+        KoiFish optionalKoiFish = koiFishRepository.findById(fishID);
         if (optionalKoiFish == null) {
-            throw new RuntimeException("KoiFish with ID " + id + " not found.");
+            throw new RuntimeException("KoiFish with ID " + fishID + " not found.");
         }
-        KoiFish koiFish = optionalKoiFish;
+
+        Pond_KoiFish pondKoiFish = pond_koiFishRepository.findPondsByKoiFishId(fishID);
+
+        Ponds ponds = pondRepository.findById(pondId);
+
+        if(pondId != pondKoiFish.getPonds().getId()){
+            pondKoiFish.setEndDate(LocalDateTime.now());
+            pondKoiFish.setMessage("Move from " + pondKoiFish.getPonds().getNamePond() + " to " + ponds.getNamePond());
+        }else{
+            pondKoiFish.setUpdateDate(LocalDateTime.now());
+        }
+
         // Cập nhật thông tin từ KoiFishRequest vào KoiFish
-        koiFish.setFishName(koiFishRequest.getFishName());
-        koiFish.setImageFish(koiFishRequest.getImageFish());
-        koiFish.setBirthDay(koiFishRequest.getBirthDay());
-        koiFish.setSpecies(species);
-        koiFish.setSize(koiFishRequest.getSize());
-        koiFish.setWeigh(koiFishRequest.getWeigh());
-        koiFish.setGender(gender);
-        koiFish.setOrigin(origin);
-        koiFish.setHealthyStatus(healthyStatus);
-        koiFish.setNote(koiFishRequest.getNote());
+        optionalKoiFish.setFishName(koiFishRequest.getFishName());
+        optionalKoiFish.setImageFish(koiFishRequest.getImageFish());
+        optionalKoiFish.setBirthDay(koiFishRequest.getBirthDay());
+        optionalKoiFish.setSpecies(species);
+        optionalKoiFish.setSize(koiFishRequest.getSize());
+        optionalKoiFish.setWeigh(koiFishRequest.getWeigh());
+        optionalKoiFish.setGender(gender);
+        optionalKoiFish.setOrigin(origin);
+        optionalKoiFish.setHealthyStatus(healthyStatus);
+        optionalKoiFish.setNote(koiFishRequest.getNote());
         // Lưu lại KoiFish đã cập nhật
-        koiFishRepository.save(koiFish);
-        return convertToResponse(koiFish);
+
+        pond_koiFishRepository.save(pondKoiFish);
+        koiFishRepository.save(optionalKoiFish);
+        return convertToResponse(optionalKoiFish);
     }
 
     private KoiFishResponse convertToResponse(KoiFish koiFish) {
@@ -146,8 +160,6 @@ public class KoiFishService {
         response.setOrigin(koiFish.getOrigin());
         response.setHealthyStatus(koiFish.getHealthyStatus());
         response.setNote(koiFish.getNote());
-        response.setPondID(koiFish.getPondKoiFish().get(0).getPonds().getId());
-        response.setDateAdded(koiFish.getPondKoiFish().get(0).getDateAdded());
         return response;
     }
 
@@ -157,11 +169,20 @@ public class KoiFishService {
         if (koiFishOptional == null) {
             return new ResponseEntity<>("Koi fish not found", HttpStatus.NOT_FOUND);
         }
-        KoiFish koiFish = koiFishOptional;
 
-        koiFish.setDeleted(true);
+        // Mark KoiFish as deleted
+        koiFishOptional.setDeleted(true);
+        koiFishRepository.save(koiFishOptional);
 
-        koiFishRepository.save(koiFish);
+        // Find the associated Pond_KoiFish entry
+        Pond_KoiFish pondKoiFish = pond_koiFishRepository.findPondsByKoiFishId(koiFishID);
+        if (pondKoiFish == null) {
+            return new ResponseEntity<>("Pond-KoiFish association not found", HttpStatus.NOT_FOUND);
+        }
+
+        // Set the end date and save the association
+        pondKoiFish.setEndDate(LocalDateTime.now());
+        pond_koiFishRepository.save(pondKoiFish);
 
         return new ResponseEntity<>("Koi fish marked as deleted successfully", HttpStatus.OK);
     }
@@ -313,4 +334,77 @@ public class KoiFishService {
             return new ResponseEntity<>(respon, errorCode.getHttpStatus());
         }
     }
+
+    public ResponseEntity<?> getHistory(int koiFishID){
+        try{
+            Account account = accountUtils.getCurrentAccount();
+            if (account == null) {
+                throw new SystemException(ErrorCode.NOT_LOGIN);
+            }
+
+            List<Pond_KoiFish> histo = pond_koiFishRepository.findByKoiFishId(koiFishID);
+            if(histo.isEmpty()){
+                throw new SystemException(ErrorCode.EMPTY);
+            }
+
+            List<HistoryResponse> responses = new ArrayList<>();
+
+            for(Pond_KoiFish fish : histo){
+                String fishname = fish.getKoiFish().getFishName();
+                responses.add(new HistoryResponse(
+                        fish.getId(),
+                        fishname,
+                        fish.getDateAdded(),
+                        fish.getEndDate()
+                ));
+            }
+            if (responses.isEmpty()) {
+                throw new SystemException(ErrorCode.EMPTY);
+            }
+
+            return new ResponseEntity<>(responses, HttpStatus.OK);
+        }catch (SystemException ex){
+            ErrorCode errorCode = ex.getErrorCode();
+            ResponseException respon = new ResponseException(ex.getMessage());
+            return new ResponseEntity<>(respon, errorCode.getHttpStatus());
+        }
+    }
+
+    public ResponseEntity<?> getAll() {
+        try {
+
+            Account account = accountUtils.getCurrentAccount();
+            if (account == null) {
+                throw new SystemException(ErrorCode.NOT_LOGIN);
+            }
+
+            List<Ponds> pondsList = pondRepository.findByAccount(account);
+            if (pondsList == null) {
+                throw new SystemException(ErrorCode.EMPTY);
+            }
+            List<KoiFishResponse> fishs = new ArrayList<>();
+            for (Ponds pond : pondsList) {
+                List<Pond_KoiFish> pondKoiFish = pond.getKoiFishList();
+                for (Pond_KoiFish pond_koiFish : pondKoiFish) {
+                    KoiFish fish = pond_koiFish.getKoiFish();
+                    Pond_KoiFish pondKoi = pond_koiFishRepository.findPondsByKoiFishId(fish.getId());
+                    fishs.add(new KoiFishResponse(
+                            fish.getId(),
+                            fish.getFishName(),
+                            pondKoi.getPonds().getId()
+                    ));
+                }
+            }
+            if (fishs.isEmpty()) {
+                throw new SystemException(ErrorCode.EMPTY);
+            }
+
+            return new ResponseEntity<>(fishs, HttpStatus.OK);
+        } catch (SystemException ex) {
+            ErrorCode errorCode = ex.getErrorCode();
+            ResponseException respon = new ResponseException(ex.getMessage());
+            return new ResponseEntity<>(respon, errorCode.getHttpStatus());
+        }
+    }
+
 }
