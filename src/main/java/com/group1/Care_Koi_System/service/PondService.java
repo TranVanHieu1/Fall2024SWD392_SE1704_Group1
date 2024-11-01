@@ -56,12 +56,19 @@ public class PondService {
             }
 
             if (request.getNamePond() == null || request.getNamePond().trim().isEmpty()) {
-                throw new AuthAppException(ErrorCode.INVALID_POND_NAME);
+                throw new SystemException(ErrorCode.INVALID_POND_NAME);
             }
 
             Ponds existingPond = pondRepository.findByNamePond(request.getNamePond());
             if (existingPond != null) {
-                throw new AuthAppException(ErrorCode.POND_ALREADY_EXISTS);
+                throw new SystemException(ErrorCode.POND_ALREADY_EXISTS);
+            }
+
+            if(request.getSize() < 2){
+                throw new SystemException(ErrorCode.INVALID_SIZE);
+            }
+            if(request.getHeight() < 0.8){
+                throw new SystemException(ErrorCode.INVALID_HEIGHT);
             }
 
             Ponds pond = new Ponds();
@@ -74,7 +81,7 @@ public class PondService {
             volume = request.getSize() * request.getHeight();
             pond.setVolume(volume);
             int maximum = 0;
-            maximum = (int)volume * 2;
+            maximum = (int) volume * 2;
             pond.setMaximum((maximum));
             pond.setCreateAt(LocalDateTime.now());
 
@@ -99,7 +106,7 @@ public class PondService {
             }
 
             Ponds existingPond = pondRepository.findById(pondId);
-            if(existingPond == null) {
+            if (existingPond == null) {
                 throw new SystemException(ErrorCode.POND_NOT_FOUND);
             }
 
@@ -121,7 +128,7 @@ public class PondService {
             volume = request.getSize() * request.getHeight();
             existingPond.setVolume(volume);
             int maximum = 0;
-            maximum = (int)volume * 2;
+            maximum = (int) volume * 2;
             existingPond.setMaximum((maximum));
             existingPond.setCreateAt(LocalDateTime.now());
 
@@ -129,7 +136,7 @@ public class PondService {
 
             ResponseException responseException = new ResponseException("Update Successfully!");
             return ResponseEntity.ok(responseException);
-        }catch (SystemException ex) {
+        } catch (SystemException ex) {
             ErrorCode errorCode = ex.getErrorCode();
             ResponseException respon = new ResponseException(ex.getMessage());
             return new ResponseEntity<>(respon, errorCode.getHttpStatus());
@@ -172,11 +179,11 @@ public class PondService {
             List<Ponds> pondsList = pondRepository.findByAccount(account).stream()
                     .filter(pond -> !pond.isDeleted()).toList();
 
-            if(pondsList.isEmpty()){
+            if (pondsList.isEmpty()) {
                 throw new SystemException(ErrorCode.EMPTY);
             }
             List<ViewPondResponse> ponds = new ArrayList<>();
-            for(Ponds pond: pondsList){
+            for (Ponds pond : pondsList) {
 
 
                 List<Pond_KoiFish> pondKoiFish = pond_koiFishRepository.findKoiFishByPondsId(pond.getId());
@@ -190,7 +197,8 @@ public class PondService {
                         fishName,
                         pond.getImage(),
                         pond.getSize(),
-                        pond.getVolume()
+                        pond.getVolume(),
+                        pond.getHeight()
                 ));
 
             }
@@ -208,11 +216,11 @@ public class PondService {
             List<Ponds> pondsList = pondRepository.findAll().stream()
                     .filter(pond -> !pond.isDeleted()).toList();
 
-            if(pondsList.isEmpty()){
+            if (pondsList.isEmpty()) {
                 throw new SystemException(ErrorCode.EMPTY);
             }
             List<ViewPondResponse> ponds = new ArrayList<>();
-            for(Ponds pond: pondsList){
+            for (Ponds pond : pondsList) {
 
                 List<Pond_KoiFish> pondKoiFish = pond_koiFishRepository.findKoiFishByPondsId(pond.getId());
                 List<String> fishName = pondKoiFish.stream()
@@ -225,7 +233,8 @@ public class PondService {
                         fishName,
                         pond.getImage(),
                         pond.getSize(),
-                        pond.getVolume()
+                        pond.getVolume(),
+                        pond.getHeight()
                 ));
 
             }
@@ -237,65 +246,51 @@ public class PondService {
         }
     }
 
-    public PondSearchResponse searchPond(String namePond, Integer id) {
-        PondSearchResponse response = new PondSearchResponse();
 
+    public ResponseEntity<?> getPondByID(int pondID) {
+        try {
 
-        List<Ponds> ponds = pondRepository.searchByNamePondAndIdPond(namePond, id);
+            Account account = accountUtils.getCurrentAccount();
+            if (account == null) {
+                throw new SystemException(ErrorCode.NOT_LOGIN);
+            }
 
-        if (ponds.isEmpty()) {
-            response.setMessage("No ponds found!");
-            response.setPondsList(Collections.emptyList());
-        } else {
-            List<PondResponse> pondResponses = ponds.stream()
-                    .map(pond -> {
-                        PondResponse pondResponse = new PondResponse();
-                        pondResponse.setNamePond(pond.getNamePond());
-                        pondResponse.setId(pond.getId());
-                        pondResponse.setSize(pond.getSize());
-                        pondResponse.setVolume(pond.getVolume());
-                        pondResponse.setImage(pond.getImage());
-                        pondResponse.setCreateAt(pond.getCreateAt());
+            Ponds pond = pondRepository.findById(pondID);
 
-                        List<KoiFishResponse> koiFishResponses = pond.getKoiFishList().stream()
-                                .map(pondKoiFish -> {
-                                    KoiFishResponse koiFishResponse = new KoiFishResponse();
-                                    koiFishResponse.setId(pondKoiFish.getKoiFish().getId());
-                                    koiFishResponse.setFishName(pondKoiFish.getKoiFish().getFishName());
-                                    koiFishResponse.setSize(pondKoiFish.getKoiFish().getSize());
-                                    koiFishResponse.setWeigh(pondKoiFish.getKoiFish().getWeigh());
-                                    koiFishResponse.setDateAdded(pondKoiFish.getDateAdded());
-                                    return koiFishResponse;
-                                })
-                                .collect(Collectors.toList());
+            if (pond == null) {
+                throw new SystemException(ErrorCode.EMPTY);
+            }
 
-                        pondResponse.setKoiFishList(koiFishResponses);
+            List<Pond_KoiFish> pondKoiFish = pond_koiFishRepository.findKoiFishByPondsId(pond.getId());
 
-                        List<WaterParameterResponse> waterParameterResponses = pond.getParameters().stream()
-                                .map(parameters -> {
-                                    WaterParameterResponse wpResponse = new WaterParameterResponse();
-                                    wpResponse.setPercentSalt(parameters.getPercentSalt());
-                                    wpResponse.setTemperature(parameters.getTemperature());
-                                    wpResponse.setPH(parameters.getPH());
-                                    wpResponse.setO2(parameters.getO2());
-                                    wpResponse.setNO2(parameters.getNO2());
-                                    wpResponse.setNO3(parameters.getNO3());
-                                    wpResponse.setCheckDate(parameters.getCheckDate());
-                                    return wpResponse;
-                                })
-                                .collect(Collectors.toList());
+            List<WaterParameter> waterParameter = pond.getParameters();
 
-                        pondResponse.setParameters(waterParameterResponses);
+            if (waterParameter == null || waterParameter.isEmpty()) {
+                throw new SystemException(ErrorCode.EMPTY);
+            }
 
-                        return pondResponse;
-                    })
-                    .collect(Collectors.toList());
-
-            response.setMessage("Ponds retrieved successfully.");
-            response.setPondsList(pondResponses);
+            List<String> fishName = pondKoiFish.stream()
+                    .filter(koiFish -> !koiFish.getKoiFish().isDeleted()) // Filter non-deleted fish
+                    .map(koiFish -> koiFish.getKoiFish().getFishName())   // Map to fish names
+                    .toList();
+            ViewPondResponse viewPondResponse = new ViewPondResponse(
+                    pond.getNamePond(),
+                    fishName,
+                    pond.getSize(),
+                    pond.getVolume(),
+                    waterParameter.get(0).getPercentSalt(),
+                    waterParameter.get(0).getTemperature(),
+                    waterParameter.get(0).getO2(),
+                    waterParameter.get(0).getNO2(),
+                    waterParameter.get(0).getNO3(),
+                    waterParameter.get(0).getPH()
+            );
+            return new ResponseEntity<>(viewPondResponse, HttpStatus.OK);
+        } catch (SystemException ex) {
+            ErrorCode errorCode = ex.getErrorCode();
+            ResponseException respon = new ResponseException(ex.getMessage());
+            return new ResponseEntity<>(respon, errorCode.getHttpStatus());
         }
-
-        return response;
     }
 }
 

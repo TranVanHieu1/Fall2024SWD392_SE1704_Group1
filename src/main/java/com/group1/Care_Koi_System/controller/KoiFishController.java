@@ -27,11 +27,11 @@ public class KoiFishController {
                                                        @RequestParam KoiOrigin origin, @RequestParam HealthyStatus healthyStatus){
         return koiFishService.createKoiFish(koiFishRequest, species, gender, origin, healthyStatus, pondID);
     }
-    @PutMapping("/update-fish/{pondID}")
-    public KoiFishResponse updateKoiFish(@PathVariable int pondID, @RequestBody KoiFishRequest koiFishRequest,
+    @PutMapping("/update-fish/{pondID}/{fishID}")
+    public KoiFishResponse updateKoiFish(@PathVariable int pondID, @PathVariable int fishID, @RequestBody KoiFishRequest koiFishRequest,
                                                          @RequestParam KoiSpecies species, @RequestParam KoiGender gender,
                                                          @RequestParam KoiOrigin origin, @RequestParam HealthyStatus healthyStatus){
-        return  koiFishService.updateKoiFish(pondID, koiFishRequest, species,gender, origin, healthyStatus);
+        return  koiFishService.updateKoiFish(pondID, fishID, koiFishRequest, species,gender, origin, healthyStatus);
     }
 
     @DeleteMapping("/delete-fish/{koiFishID}")
@@ -57,5 +57,15 @@ public class KoiFishController {
     @GetMapping("/get-koi-fish-by-account")
     public ResponseEntity<?> getFishByAccount(){
         return  koiFishService.getKoiFishByAccount();
+    }
+
+    @GetMapping("/get-history/{fishID}")
+    public ResponseEntity<?> getHistory(@PathVariable int fishID){
+        return koiFishService.getHistory(fishID);
+    }
+
+    @GetMapping("get-all")
+    public ResponseEntity<?> getAll(){
+        return koiFishService.getAll();
     }
 }

@@ -13,7 +13,7 @@ public class CORSConfig implements WebMvcConfigurer {
                         "http://localhost:5173",
                         "http://localhost:8080",
                         "http://localhost:8000",
-                        "https://fall2024swd392-se1704-group1.onrender.com",
+                        "https://koi-care-shop.vercel.app",
                         "https://carekoisystem-chb5b3gdaqfwanfr.canadacentral-01.azurewebsites.net")
                 .allowedHeaders("*")
                 .exposedHeaders("Access-Control-Allow-Origin", "Access-Control-Allow-Methods","Access-Control-Allow-Headers")
