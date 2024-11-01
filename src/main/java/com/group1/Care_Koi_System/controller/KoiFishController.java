@@ -73,4 +73,9 @@ public class KoiFishController {
     public  ResponseEntity<?> getFihsBYID(@PathVariable int fishID){
         return koiFishService.getKoiFishByID(fishID);
     }
+
+    @GetMapping("get-history-by-account")
+    public  ResponseEntity<?> getAllByAccount(){
+        return  koiFishService.getHistoryByAccount();
+    }
 }

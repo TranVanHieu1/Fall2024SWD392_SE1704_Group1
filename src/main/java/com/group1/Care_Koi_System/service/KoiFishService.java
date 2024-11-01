@@ -134,7 +134,7 @@ public class KoiFishService {
         if (ponds.getId() != currentPond.getId()) {
             pondKoiFish.setPonds(ponds);
             pondKoiFish.setEndDate(LocalDateTime.now());
-            pondKoiFish.setMessage("Move from " + currentPond.getNamePond() + " to " + ponds.getNamePond());
+            pondKoiFish.setMessage("Moved from " + currentPond.getNamePond() + " to " + ponds.getNamePond());
         } else {
             pondKoiFish.setUpdateDate(LocalDateTime.now());
         }
@@ -447,6 +447,51 @@ public class KoiFishService {
             );
 
             return new ResponseEntity<>(fishs, HttpStatus.OK);
+        } catch (SystemException ex) {
+            ErrorCode errorCode = ex.getErrorCode();
+            ResponseException respon = new ResponseException(ex.getMessage());
+            return new ResponseEntity<>(respon, errorCode.getHttpStatus());
+        }
+    }
+
+    public ResponseEntity<?> getHistoryByAccount() {
+        try {
+            Account account = accountUtils.getCurrentAccount();
+            if (account == null) {
+                throw new SystemException(ErrorCode.NOT_LOGIN);
+            }
+
+            List<Pond_KoiFish> histo = pond_koiFishRepository.findAll();
+            if (histo.isEmpty()) {
+                throw new SystemException(ErrorCode.EMPTY);
+            }
+
+            List<HistoryResponse> responses = new ArrayList<>();
+
+            List<Ponds> pondsList = pondRepository.findByAccount(account);
+            if (pondsList == null) {
+                throw new SystemException(ErrorCode.EMPTY);
+            }
+
+            for (Ponds pond : pondsList) {
+                List<Pond_KoiFish> pondKoiFish = pond.getKoiFishList();
+                for (Pond_KoiFish pond_koiFish : pondKoiFish) {
+                    KoiFish fish = pond_koiFish.getKoiFish();
+                    Pond_KoiFish pondKoi = pond_koiFishRepository.findPondsByKoiFishId(fish.getId());
+                    responses.add(new HistoryResponse(
+                            fish.getId(),
+                            fish.getFishName(),
+                            pondKoi.getDateAdded(),
+                            pondKoi.getEndDate(),
+                            pondKoi.getMessage()
+                    ));
+                }
+            }
+            if (responses.isEmpty()) {
+                throw new SystemException(ErrorCode.EMPTY);
+            }
+
+            return new ResponseEntity<>(responses, HttpStatus.OK);
         } catch (SystemException ex) {
             ErrorCode errorCode = ex.getErrorCode();
             ResponseException respon = new ResponseException(ex.getMessage());
