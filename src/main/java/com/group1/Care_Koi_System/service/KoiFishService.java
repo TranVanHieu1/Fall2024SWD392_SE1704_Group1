@@ -120,13 +120,21 @@ public class KoiFishService {
         }
 
         Pond_KoiFish pondKoiFish = pond_koiFishRepository.findPondsByKoiFishId(fishID);
+        if (pondKoiFish == null) {
+            throw new IllegalArgumentException("No pond-koi fish association found for fish ID: " + fishID);
+        }
 
         Ponds ponds = pondRepository.findById(pondId);
+        if (ponds == null) {
+            throw new IllegalArgumentException("No pond found for pond ID: " + pondId);
+        }
 
-        if (pondId != pondKoiFish.getPonds().getId()) {
+        Ponds currentPond = pondKoiFish.getPonds();
+
+        if (ponds.getId() != currentPond.getId()) {
             pondKoiFish.setPonds(ponds);
             pondKoiFish.setEndDate(LocalDateTime.now());
-            pondKoiFish.setMessage("Move from " + pondKoiFish.getPonds().getNamePond() + " to " + ponds.getNamePond());
+            pondKoiFish.setMessage("Move from " + currentPond.getNamePond() + " to " + ponds.getNamePond());
         } else {
             pondKoiFish.setUpdateDate(LocalDateTime.now());
         }
