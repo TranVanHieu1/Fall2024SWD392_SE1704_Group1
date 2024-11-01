@@ -68,4 +68,9 @@ public class KoiFishController {
     public ResponseEntity<?> getAll(){
         return koiFishService.getAll();
     }
+
+    @GetMapping("get-fish-by-id/{fishID}")
+    public  ResponseEntity<?> getFihsBYID(@PathVariable int fishID){
+        return koiFishService.getKoiFishByID(fishID);
+    }
 }

@@ -16,7 +16,7 @@ public class TicketResponse {
 
     private int id;
 
-    private String name;
+    private String title;
 
     private String pondName;
 
@@ -28,9 +28,9 @@ public class TicketResponse {
 
     private boolean isResolved;
 
-    public TicketResponse(int id, String name, String pondName, String fishName, String text) {
+    public TicketResponse(int id, String title, String pondName, String fishName, String text) {
         this.id = id;
-        this.name = name;
+        this.title = title;
         this.pondName = pondName;
         this.fishName = fishName;
         this.text = text;
@@ -40,9 +40,9 @@ public class TicketResponse {
         this.message = message;
     }
 
-    public TicketResponse(int id, String name, String pondName, String fishName, String text, boolean isResolved) {
+    public TicketResponse(int id, String title, String pondName, String fishName, String text, boolean isResolved) {
         this.id = id;
-        this.name = name;
+        this.title = title;
         this.pondName = pondName;
         this.fishName = fishName;
         this.text = text;
