@@ -2,6 +2,8 @@ package com.group1.Care_Koi_System.controller;
 
 
 import com.group1.Care_Koi_System.dto.ApiRes;
+import com.group1.Care_Koi_System.dto.HistoryResponse;
+import com.group1.Care_Koi_System.dto.Pond.DayChangeWaterResponse;
 import com.group1.Care_Koi_System.dto.Pond.PondRequest;
 import com.group1.Care_Koi_System.dto.Pond.PondResponse;
 import com.group1.Care_Koi_System.dto.SearchPond.PondSearchResponse;
@@ -60,6 +62,16 @@ public class PondController {
     @GetMapping("view-pond-by-id/{pondID}")
     public ResponseEntity<?> viewPondById(@PathVariable int pondID){
         return pondService.getPondByID(pondID);
+    }
+
+    @GetMapping("change-water/{pondID}")
+    public ResponseEntity<DayChangeWaterResponse> getDayChangWater(@PathVariable int pondID){
+        return  pondService.calculateDayChangeWater(pondID);
+    }
+
+    @GetMapping("history-change-water/{pondID}")
+    public  ResponseEntity<HistoryResponse> viewHistoryChangeWater(@PathVariable int pondID){
+        return  pondService.getHistoryPond(pondID);
     }
 }
 

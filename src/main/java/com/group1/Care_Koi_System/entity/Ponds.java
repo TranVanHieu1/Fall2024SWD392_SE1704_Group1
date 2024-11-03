@@ -15,7 +15,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class Ponds {
 
     @Id
@@ -47,6 +47,14 @@ public class Ponds {
     @Column
     private int maximum;
 
+    @Column
+    private Integer numberChangeWater;
+
+    @ElementCollection
+    @CollectionTable(name = "pond_change_history", joinColumns = @JoinColumn(name = "pond_id"))
+    @Column(name = "change_history")
+    private List<String> changeHistory = new ArrayList<>();
+
     @OneToMany(mappedBy = "ponds")
     @JsonIgnore
     private List<Pond_Feeding> pondFeedingList;
@@ -65,4 +73,11 @@ public class Ponds {
 
     @Column
     private LocalDateTime createAt;
+
+
+    public void addChangeHistory(String message) {
+        this.changeHistory.add(message);
+    }
+
+
 }

@@ -1,7 +1,9 @@
 package com.group1.Care_Koi_System.service;
 
 import com.group1.Care_Koi_System.dto.ApiRes;
+import com.group1.Care_Koi_System.dto.HistoryResponse;
 import com.group1.Care_Koi_System.dto.KoiFish.KoiFishResponse;
+import com.group1.Care_Koi_System.dto.Pond.DayChangeWaterResponse;
 import com.group1.Care_Koi_System.dto.Pond.PondRequest;
 import com.group1.Care_Koi_System.dto.Pond.PondResponse;
 import com.group1.Care_Koi_System.dto.Pond.ViewPondResponse;
@@ -64,10 +66,10 @@ public class PondService {
                 throw new SystemException(ErrorCode.POND_ALREADY_EXISTS);
             }
 
-            if(request.getSize() < 2){
+            if (request.getSize() < 2) {
                 throw new SystemException(ErrorCode.INVALID_SIZE);
             }
-            if(request.getHeight() < 0.8){
+            if (request.getHeight() < 0.8) {
                 throw new SystemException(ErrorCode.INVALID_HEIGHT);
             }
 
@@ -249,49 +251,139 @@ public class PondService {
 
     public ResponseEntity<?> getPondByID(int pondID) {
         try {
-
             Account account = accountUtils.getCurrentAccount();
             if (account == null) {
                 throw new SystemException(ErrorCode.NOT_LOGIN);
             }
 
             Ponds pond = pondRepository.findById(pondID);
-
             if (pond == null) {
                 throw new SystemException(ErrorCode.EMPTY);
             }
 
             List<Pond_KoiFish> pondKoiFish = pond_koiFishRepository.findKoiFishByPondsId(pond.getId());
-
             List<WaterParameter> waterParameter = pond.getParameters();
 
-            if (waterParameter == null || waterParameter.isEmpty()) {
-                throw new SystemException(ErrorCode.EMPTY);
+            List<String> fishName = pondKoiFish.stream()
+                    .filter(koiFish -> !koiFish.getKoiFish().isDeleted())
+                    .map(koiFish -> koiFish.getKoiFish().getFishName())
+                    .toList();
+
+            // Thiết lập giá trị mặc định là 0 nếu không có dữ liệu hoặc gặp lỗi
+            double percentSalt = 0;
+            double temperature = 0;
+            double o2 = 0;
+            double no2 = 0;
+            double no3 = 0;
+            double pH = 0;
+
+            // Nếu waterParameter không rỗng, lấy thông số từ phần tử đầu tiên và chuyển đổi sang double
+            if (!waterParameter.isEmpty()) {
+                WaterParameter firstParameter = waterParameter.get(0);
+                percentSalt = parseDoubleOrDefault(firstParameter.getPercentSalt(), 0);
+                temperature = parseDoubleOrDefault(firstParameter.getTemperature(), 0);
+                o2 = parseDoubleOrDefault(firstParameter.getO2(), 0);
+                no2 = parseDoubleOrDefault(firstParameter.getNO2(), 0);
+                no3 = parseDoubleOrDefault(firstParameter.getNO3(), 0);
+                pH = parseDoubleOrDefault(firstParameter.getPH(), 0);
             }
 
-            List<String> fishName = pondKoiFish.stream()
-                    .filter(koiFish -> !koiFish.getKoiFish().isDeleted()) // Filter non-deleted fish
-                    .map(koiFish -> koiFish.getKoiFish().getFishName())   // Map to fish names
-                    .toList();
+            // Chuyển đổi lại sang String khi tạo ViewPondResponse
             ViewPondResponse viewPondResponse = new ViewPondResponse(
                     pond.getNamePond(),
                     fishName,
                     pond.getSize(),
                     pond.getVolume(),
-                    waterParameter.get(0).getPercentSalt(),
-                    waterParameter.get(0).getTemperature(),
-                    waterParameter.get(0).getO2(),
-                    waterParameter.get(0).getNO2(),
-                    waterParameter.get(0).getNO3(),
-                    waterParameter.get(0).getPH()
+                    String.valueOf(percentSalt),
+                    String.valueOf(temperature),
+                    String.valueOf(o2),
+                    String.valueOf(no2),
+                    String.valueOf(no3),
+                    String.valueOf(pH)
             );
+
             return new ResponseEntity<>(viewPondResponse, HttpStatus.OK);
+
         } catch (SystemException ex) {
             ErrorCode errorCode = ex.getErrorCode();
-            ResponseException respon = new ResponseException(ex.getMessage());
-            return new ResponseEntity<>(respon, errorCode.getHttpStatus());
+            ResponseException response = new ResponseException(ex.getMessage());
+            return new ResponseEntity<>(response, errorCode.getHttpStatus());
         }
     }
+
+    // Phương thức chuyển đổi String sang double với giá trị mặc định nếu không chuyển được
+    private double parseDoubleOrDefault(String value, double defaultValue) {
+        try {
+            return Double.parseDouble(value);
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
+
+
+    public ResponseEntity<DayChangeWaterResponse> calculateDayChangeWater(int id) {
+        try {
+            Account account = accountUtils.getCurrentAccount();
+
+            if (account == null) {
+                throw new SystemException(ErrorCode.NOT_LOGIN);
+            }
+
+            Ponds pond = pondRepository.findById(id);
+
+            if (pond == null) {
+                throw new SystemException(ErrorCode.EMPTY);
+            }
+
+            double dayChange = 0;
+
+            dayChange = (pond.getVolume()*1000) * 0.2 / 50;
+
+
+            pond.setNumberChangeWater((int) dayChange);
+            pondRepository.save(pond);
+
+            DayChangeWaterResponse response = new DayChangeWaterResponse("You should change water after " +
+                    pond.getNumberChangeWater() + " days");
+            return new ResponseEntity<>(response, HttpStatus.OK);
+
+        } catch (SystemException ex) {
+            ErrorCode errorCode = ex.getErrorCode();
+            DayChangeWaterResponse response = new DayChangeWaterResponse(ex.getMessage());
+            return new ResponseEntity<>(response, errorCode.getHttpStatus());
+        }
+    }
+
+    public ResponseEntity<HistoryResponse> getHistoryPond(int id){
+        try{
+            Account account = accountUtils.getCurrentAccount();
+
+            if (account == null) {
+                throw new SystemException(ErrorCode.NOT_LOGIN);
+            }
+
+            Ponds pond = pondRepository.findById(id);
+
+            if (pond == null) {
+                throw new SystemException(ErrorCode.POND_NOT_FOUND);
+            }
+
+            List<String> history = pond.getChangeHistory();
+
+            if(history.isEmpty()){
+                throw new SystemException(ErrorCode.EMPTY);
+            }
+
+            HistoryResponse historyResponse = new HistoryResponse(history);
+
+            return new ResponseEntity<>(historyResponse, HttpStatus.OK);
+        }catch (SystemException ex){
+            ErrorCode errorCode = ex.getErrorCode();
+            HistoryResponse response = new HistoryResponse(ex.getMessage());
+            return new ResponseEntity<>(response, errorCode.getHttpStatus());
+        }
+    }
+
 }
 
 
