@@ -47,4 +47,7 @@ public class WaterParameter {
 
     @Column
     private boolean isDeleted;
+
+    @Column
+    private LocalDateTime updateDate;
 }

@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -108,42 +109,48 @@ public class WaterParameterService {
     }
 
 
-    public ResponseEntity<ResponseException> updateWaterParameter(int id, WaterParameterRequest waterParameterRequest){
+    public ResponseEntity<ResponseException> updateWaterParameter(int id, WaterParameterRequest waterParameterRequest) {
         try {
             Account account = accountUtils.getCurrentAccount();
             Ponds ponds = pondRepository.findById(id);
-            if(account == null) {
+            if (account == null) {
                 throw new SystemException(ErrorCode.NOT_LOGIN);
             }
             if (ponds == null) {
                 throw new SystemException(ErrorCode.POND_NOT_FOUND);
             }
-            WaterParameter waterParameter = new WaterParameter();
-
-                try {
-                    waterParameter.setPond(ponds);
-                    waterParameter.setCheckDate(LocalDateTime.now());
-
-                    validateAndSetWaterParameters(waterParameter, waterParameterRequest);
-                    waterParameterRepository.save(waterParameter);
-                    ResponseException response = new ResponseException("Update successful!");
-                    return new ResponseEntity<>(response, HttpStatus.OK);
-                } catch (SystemException ex) {
-                    throw new SystemException(ErrorCode.CAN_NOT_SAVE);
-                }
-            }catch (SystemException ex) {
-                ErrorCode errorCode = ex.getErrorCode();
-                ResponseException response = new ResponseException(ex.getMessage());
-                return new ResponseEntity<>(response, errorCode.getHttpStatus());
+            if (ponds.getChangeHistory() == null) {
+                ponds.setChangeHistory(new ArrayList<>());
             }
+
+            WaterParameter waterParameter = new WaterParameter();
+            waterParameter.setPond(ponds);
+            waterParameter.setCheckDate(LocalDateTime.now());
+
+            validateAndSetWaterParameters(waterParameter, waterParameterRequest);
+
+            ponds.addChangeHistory("You changed water on " + LocalDateTime.now());
+
+
+            pondRepository.save(ponds);
+
+            waterParameterRepository.save(waterParameter);
+            ResponseException response = new ResponseException("Update successful!");
+            return new ResponseEntity<>(response, HttpStatus.OK);
+
+        } catch (SystemException ex) {
+            ErrorCode errorCode = ex.getErrorCode();
+            ResponseException response = new ResponseException(ex.getMessage());
+            return new ResponseEntity<>(response, errorCode.getHttpStatus());
+        }
     }
 
 
-    public ResponseEntity<WaterParameterResponse> getWaterParameterByPond(int id){
-        try{
+    public ResponseEntity<WaterParameterResponse> getWaterParameterByPond(int id) {
+        try {
             Account account = accountUtils.getCurrentAccount();
             Ponds ponds = pondRepository.findById(id);
-            if(account == null) {
+            if (account == null) {
                 throw new SystemException(ErrorCode.NOT_LOGIN);
             }
             if (ponds == null) {
@@ -153,7 +160,7 @@ public class WaterParameterService {
             List<WaterParameter> waterParameterList = ponds.getParameters();
 
             WaterParameterResponse waterParametes = new WaterParameterResponse();
-            for(WaterParameter waterParameter : waterParameterList){
+            for (WaterParameter waterParameter : waterParameterList) {
                 waterParametes.setPercentSalt(waterParameter.getPercentSalt());
                 waterParametes.setTemperature(waterParameter.getTemperature());
                 waterParametes.setPH(waterParameter.getPH());
@@ -162,11 +169,11 @@ public class WaterParameterService {
                 waterParametes.setNO3(waterParameter.getNO3());
                 waterParametes.setCheckDate(waterParameter.getCheckDate());
             }
-            return  new ResponseEntity<>(waterParametes, HttpStatus.OK);
-        }catch (SystemException ex){
+            return new ResponseEntity<>(waterParametes, HttpStatus.OK);
+        } catch (SystemException ex) {
             ErrorCode errorCode = ex.getErrorCode();
             WaterParameterResponse waterParameterResponse = new WaterParameterResponse(ex.getMessage());
-            return  new ResponseEntity<>(waterParameterResponse, errorCode.getHttpStatus());
+            return new ResponseEntity<>(waterParameterResponse, errorCode.getHttpStatus());
         }
     }
 

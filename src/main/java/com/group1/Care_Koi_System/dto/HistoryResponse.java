@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 
@@ -23,6 +24,8 @@ public class HistoryResponse {
 
     private String message;
 
+    private List<String> historyChangeWater;
+
     public HistoryResponse(String message) {
         this.message = message;
     }
@@ -33,5 +36,9 @@ public class HistoryResponse {
         this.addDate = addDate;
         this.endDate = endDate;
         this.message = message;
+    }
+
+    public HistoryResponse(List<String> historyChangeWater) {
+        this.historyChangeWater = historyChangeWater;
     }
 }
