@@ -1,5 +1,6 @@
 package com.group1.Care_Koi_System.service;
 
+import com.group1.Care_Koi_System.dto.Pond.ViewPondResponse;
 import com.group1.Care_Koi_System.dto.WaterParameter.WaterParameterRequest;
 import com.group1.Care_Koi_System.dto.WaterParameter.WaterParameterResponse;
 import com.group1.Care_Koi_System.entity.Account;
@@ -15,6 +16,7 @@ import com.group1.Care_Koi_System.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -32,6 +34,7 @@ public class WaterParameterService {
 
     @Autowired
     private AccountUtils accountUtils;
+
 
     public ResponseEntity<ResponseException> createWaterParameter(int id, WaterParameterRequest waterParameterRequest) {
 
@@ -53,7 +56,10 @@ public class WaterParameterService {
             // Validate and set water parameters
             validateAndSetWaterParameters(waterParameter, waterParameterRequest);
 
+            ponds.setDateAutoFilter("The pond will automatically filter water every 3 days");
+
             waterParameterRepository.save(waterParameter);
+            pondRepository.save(ponds);
 
             ResponseException response = new ResponseException("Save successful!");
             return new ResponseEntity<>(response, HttpStatus.OK);
@@ -174,6 +180,91 @@ public class WaterParameterService {
             ErrorCode errorCode = ex.getErrorCode();
             WaterParameterResponse waterParameterResponse = new WaterParameterResponse(ex.getMessage());
             return new ResponseEntity<>(waterParameterResponse, errorCode.getHttpStatus());
+        }
+    }
+
+
+    @Scheduled(fixedRate = 259200000) //3 ngày
+    public ResponseEntity<ResponseException> autoWaterFiltering(int id) {
+        try {
+            Account account = accountUtils.getCurrentAccount();
+
+            if (account == null) {
+                throw new SystemException(ErrorCode.NOT_LOGIN);
+            }
+
+            Ponds ponds = pondRepository.findById(id);
+            if (ponds == null) {
+                throw new SystemException(ErrorCode.POND_NOT_FOUND);
+            }
+
+            List<WaterParameter> waterParameter = ponds.getParameters();
+            for (WaterParameter water : waterParameter) {
+                water.setPercentSalt("0.3"); // Giả sử giá trị ví dụ
+                water.setTemperature("25"); // Giá trị ví dụ
+                water.setPH("7.5"); // Giá trị ví dụ
+                water.setO2("6.0"); // Giá trị ví dụ
+                water.setNO2("0.3"); // Giá trị ví dụ
+                water.setNO3("10"); // Giá trị ví dụ
+                waterParameterRepository.save(water);
+            }
+
+            ResponseException respons = new ResponseException("Automatically filters water successfully");
+            return new ResponseEntity<>(respons, HttpStatus.OK);
+        } catch (SystemException ex) {
+            ErrorCode errorCode = ex.getErrorCode();
+            ResponseException response = new ResponseException(ex.getMessage());
+            return new ResponseEntity<>(response, errorCode.getHttpStatus());
+        }
+    }
+
+    public ResponseEntity<WaterParameterResponse> getAutoFilter(int Id) {
+        try {
+            Account account = accountUtils.getCurrentAccount();
+            Ponds ponds = pondRepository.findById(Id);
+            if (account == null) {
+                throw new SystemException(ErrorCode.NOT_LOGIN);
+            }
+            if (ponds == null) {
+                throw new SystemException(ErrorCode.POND_NOT_FOUND);
+            }
+
+            WaterParameterResponse response = new WaterParameterResponse(
+                    ponds.getDateAutoFilter()
+            );
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (SystemException ex) {
+            ErrorCode errorCode = ex.getErrorCode();
+            WaterParameterResponse response = new WaterParameterResponse(ex.getMessage());
+            return new ResponseEntity<>(response, errorCode.getHttpStatus());
+        }
+    }
+
+    public ResponseEntity<?> getAllAutoFilter() {
+        try {
+            Account account = accountUtils.getCurrentAccount();
+            List<Ponds> listPonds = pondRepository.findByAccount(account);
+            if (account == null) {
+                throw new SystemException(ErrorCode.NOT_LOGIN);
+            }
+            if (listPonds == null) {
+                throw new SystemException(ErrorCode.POND_NOT_FOUND);
+            }
+
+            List<ViewPondResponse> response = new ArrayList<>();
+            for(Ponds pond : listPonds){
+                ViewPondResponse viewPondResponse = new ViewPondResponse(
+                        pond.getId(),
+                        pond.getNamePond(),
+                        pond.getDateAutoFilter()
+                );
+                response.add(viewPondResponse);
+            }
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (SystemException ex) {
+            ErrorCode errorCode = ex.getErrorCode();
+            WaterParameterResponse response = new WaterParameterResponse(ex.getMessage());
+            return new ResponseEntity<>(response, errorCode.getHttpStatus());
         }
     }
 

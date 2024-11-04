@@ -291,6 +291,7 @@ public class PondService {
             // Chuyển đổi lại sang String khi tạo ViewPondResponse
             ViewPondResponse viewPondResponse = new ViewPondResponse(
                     pond.getNamePond(),
+                    pond.getImage(),
                     fishName,
                     pond.getSize(),
                     pond.getVolume(),
