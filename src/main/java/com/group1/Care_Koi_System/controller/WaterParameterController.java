@@ -31,4 +31,19 @@ public class WaterParameterController {
     public ResponseEntity<WaterParameterResponse> viewWaterParameter(@PathVariable int pondID){
         return waterParameterService.getWaterParameterByPond(pondID);
     }
+
+    @GetMapping("number-day-auto-filter-water/{pondID}")
+    public  ResponseEntity<WaterParameterResponse> autoFilter(@PathVariable int pondID){
+        return waterParameterService.getAutoFilter(pondID);
+    }
+
+    @PostMapping("execute-auto-filter/{pondID}")
+    public ResponseEntity<ResponseException>  filter(@PathVariable int pondID){
+        return waterParameterService.autoWaterFiltering(pondID);
+    }
+
+    @GetMapping("get-all-number-day-autou-filter-water")
+    public ResponseEntity<?> getAutoFilter(){
+        return  waterParameterService.getAllAutoFilter();
+    }
 }

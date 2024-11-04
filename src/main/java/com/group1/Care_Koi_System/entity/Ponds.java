@@ -50,6 +50,9 @@ public class Ponds {
     @Column
     private Integer numberChangeWater;
 
+    @Column
+    private String dateAutoFilter;
+
     @ElementCollection
     @CollectionTable(name = "pond_change_history", joinColumns = @JoinColumn(name = "pond_id"))
     @Column(name = "change_history")

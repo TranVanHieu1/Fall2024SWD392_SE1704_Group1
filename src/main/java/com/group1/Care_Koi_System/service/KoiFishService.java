@@ -316,21 +316,23 @@ public class KoiFishService {
                 List<Pond_KoiFish> pondKoiFish = pond.getKoiFishList();
                 for (Pond_KoiFish pond_koiFish : pondKoiFish) {
                     KoiFish fish = pond_koiFish.getKoiFish();
-                    Pond_KoiFish pondKoi = pond_koiFishRepository.findPondsByKoiFishId(fish.getId());
-                    fishs.add(new KoiFishResponse(
-                            fish.getId(),
-                            fish.getFishName(),
-                            fish.getImageFish(),
-                            fish.getBirthDay(),
-                            fish.getSpecies(),
-                            fish.getSize(),
-                            fish.getWeigh(),
-                            fish.getGender(),
-                            fish.getOrigin(),
-                            fish.getHealthyStatus(),
-                            fish.getNote(),
-                            pondKoi.getPonds().getId()
-                    ));
+                   if(!fish.isDeleted()){
+                       Pond_KoiFish pondKoi = pond_koiFishRepository.findPondsByKoiFishId(fish.getId());
+                       fishs.add(new KoiFishResponse(
+                               fish.getId(),
+                               fish.getFishName(),
+                               fish.getImageFish(),
+                               fish.getBirthDay(),
+                               fish.getSpecies(),
+                               fish.getSize(),
+                               fish.getWeigh(),
+                               fish.getGender(),
+                               fish.getOrigin(),
+                               fish.getHealthyStatus(),
+                               fish.getNote(),
+                               pondKoi.getPonds().getId()
+                       ));
+                   }
                 }
             }
             if (fishs.isEmpty()) {
