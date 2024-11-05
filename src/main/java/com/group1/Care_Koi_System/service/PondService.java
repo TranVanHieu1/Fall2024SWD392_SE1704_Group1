@@ -86,6 +86,7 @@ public class PondService {
             maximum = (int) volume * 2;
             pond.setMaximum((maximum));
             pond.setCreateAt(LocalDateTime.now());
+            pond.setDateAutoFilter("The pond will automatically filter water every 3 days");
 
 
             pondRepository.save(pond);
