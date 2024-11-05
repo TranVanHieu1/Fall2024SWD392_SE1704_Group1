@@ -501,4 +501,43 @@ public class KoiFishService {
         }
     }
 
+    public ResponseEntity<?> getKoiFishByPondId(int id){
+        try{
+            Account account = accountUtils.getCurrentAccount();
+            if (account == null) {
+                throw new SystemException(ErrorCode.NOT_LOGIN);
+            }
+
+            List<Pond_KoiFish> pondKoiFish = pond_koiFishRepository.findKoiFishByPondsId(id);
+
+            if(pondKoiFish.isEmpty()){
+                throw new SystemException(ErrorCode.EMPTY);
+            }
+
+            List<KoiFishResponse> responses = new ArrayList<>();
+            for(Pond_KoiFish pond_koiFish : pondKoiFish){
+                KoiFish koiFish = pond_koiFish.getKoiFish();
+                if(!koiFish.isDeleted()){
+                    KoiFishResponse koiFishResponse = new KoiFishResponse(
+                            koiFish.getId(),
+                            koiFish.getFishName(),
+                            koiFish.getImageFish()
+                    );
+
+                    responses.add(koiFishResponse);
+                }
+            }
+
+            if(responses.isEmpty()){
+                throw new SystemException(ErrorCode.EMPTY);
+            }
+
+            return new ResponseEntity<>(responses, HttpStatus.OK);
+        }catch (SystemException ex){
+            ErrorCode errorCode = ex.getErrorCode();
+            ResponseException respon = new ResponseException(ex.getMessage());
+            return new ResponseEntity<>(respon, errorCode.getHttpStatus());
+        }
+    }
+
 }

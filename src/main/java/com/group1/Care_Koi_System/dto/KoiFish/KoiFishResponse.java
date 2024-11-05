@@ -78,4 +78,10 @@ public class KoiFishResponse {
         this.fishName = fishName;
         this.pondID = pondID;
     }
+
+    public KoiFishResponse(int id, String fishName, String imageFish) {
+        this.id = id;
+        this.fishName = fishName;
+        this.imageFish = imageFish;
+    }
 }

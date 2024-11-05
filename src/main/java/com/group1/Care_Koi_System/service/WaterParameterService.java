@@ -20,6 +20,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -133,7 +134,10 @@ public class WaterParameterService {
 
             validateAndSetWaterParameters(waterParameter, waterParameterRequest);
 
-            ponds.addChangeHistory("You changed water on " + LocalDateTime.now());
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+            String formattedDate = LocalDateTime.now().format(formatter);
+
+            ponds.addChangeHistory("You changed water on " + formattedDate);
 
 
             pondRepository.save(ponds);
