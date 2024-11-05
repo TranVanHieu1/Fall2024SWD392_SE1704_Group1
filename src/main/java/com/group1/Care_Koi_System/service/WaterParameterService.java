@@ -56,10 +56,8 @@ public class WaterParameterService {
             // Validate and set water parameters
             validateAndSetWaterParameters(waterParameter, waterParameterRequest);
 
-            ponds.setDateAutoFilter("The pond will automatically filter water every 3 days");
-
             waterParameterRepository.save(waterParameter);
-            pondRepository.save(ponds);
+
 
             ResponseException response = new ResponseException("Save successful!");
             return new ResponseEntity<>(response, HttpStatus.OK);
