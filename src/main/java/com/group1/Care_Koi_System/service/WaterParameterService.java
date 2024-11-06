@@ -20,6 +20,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -135,7 +137,9 @@ public class WaterParameterService {
             validateAndSetWaterParameters(waterParameter, waterParameterRequest);
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-            String formattedDate = LocalDateTime.now().format(formatter);
+// Lấy thời gian hiện tại theo múi giờ Việt Nam (GMT+7)
+            ZonedDateTime vietnamTime = LocalDateTime.now().atZone(ZoneId.of("Asia/Ho_Chi_Minh"));
+            String formattedDate = vietnamTime.format(formatter);
 
             ponds.addChangeHistory("You changed water on " + formattedDate);
 
