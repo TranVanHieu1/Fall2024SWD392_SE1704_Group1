@@ -83,4 +83,9 @@ public class KoiFishController {
     public ResponseEntity<?> getFishByID(@PathVariable int pondID){
         return koiFishService.getKoiFishByPondId(pondID);
     }
+
+    @GetMapping("/get-koi-fish-unhealthy")
+    public ResponseEntity<?> getFishUnHealthy(){
+        return  koiFishService.getKoiFishUnHealthy();
+    }
 }
