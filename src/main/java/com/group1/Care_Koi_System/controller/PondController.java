@@ -73,5 +73,10 @@ public class PondController {
     public  ResponseEntity<HistoryResponse> viewHistoryChangeWater(@PathVariable int pondID){
         return  pondService.getHistoryPond(pondID);
     }
+
+    @GetMapping("get-feeding/{pondID}")
+    public ResponseEntity<?> getFeeding(@PathVariable int pondID){
+        return  pondService.getFeeding(pondID);
+    }
 }
 
