@@ -34,4 +34,11 @@ public class Feeding {
 
     @Column(name = "feeding_time")
     private LocalDateTime feedingTime;
+
+    public Feeding(int id, FoodType foodType, double amount, LocalDateTime feedingTime) {
+        this.id = id;
+        this.foodType = foodType;
+        this.amount = amount;
+        this.feedingTime = feedingTime;
+    }
 }

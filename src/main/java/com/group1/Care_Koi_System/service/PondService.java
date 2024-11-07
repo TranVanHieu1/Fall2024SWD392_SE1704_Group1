@@ -16,6 +16,7 @@ import com.group1.Care_Koi_System.exceptionhandler.ResponseException;
 import com.group1.Care_Koi_System.exceptionhandler.SystemException;
 import com.group1.Care_Koi_System.repository.KoiFishRepository;
 import com.group1.Care_Koi_System.repository.PondRepository;
+import com.group1.Care_Koi_System.repository.Pond_FeedingRepository;
 import com.group1.Care_Koi_System.repository.Pond_KoiFishRepository;
 import com.group1.Care_Koi_System.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,9 @@ public class PondService {
 
     @Autowired
     private Pond_KoiFishRepository pond_koiFishRepository;
+
+    @Autowired
+    private Pond_FeedingRepository pondFeedingRepository;
 
 
     public ResponseEntity<ResponseException> createPond(PondRequest request) {
@@ -386,6 +390,44 @@ public class PondService {
         }
     }
 
+
+    public ResponseEntity<?> getFeeding(int id){
+        try{
+            Account account = accountUtils.getCurrentAccount();
+            if (account == null) {
+                throw new SystemException(ErrorCode.NOT_LOGIN);
+            }
+
+            List<Pond_Feeding> pondFeeding = pondFeedingRepository.findByPondsId(id);
+            if(pondFeeding == null){
+                throw new SystemException(ErrorCode.EMPTY);
+            }
+
+            List<Feeding> listFeeding = new ArrayList<>();
+            for(Pond_Feeding pond_feeding : pondFeeding){
+                Feeding feeding = pond_feeding.getFeeding();
+                listFeeding.add(new Feeding(
+                        feeding.getId(),
+                        feeding.getFoodType(),
+                        feeding.getAmount(),
+                        feeding.getFeedingTime()
+                ));
+            }
+
+
+            if (listFeeding == null){
+                throw  new SystemException(ErrorCode.EMPTY);
+            }
+
+            return new ResponseEntity<>(listFeeding, HttpStatus.OK);
+        }catch (SystemException ex){
+            ErrorCode errorCode = ex.getErrorCode();
+            ResponseException respon = new ResponseException(ex.getMessage());
+            return new ResponseEntity<>(respon, errorCode.getHttpStatus());
+        }
+
+
+    }
 }
 
 

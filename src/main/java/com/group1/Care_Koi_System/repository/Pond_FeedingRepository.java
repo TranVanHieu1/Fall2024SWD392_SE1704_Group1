@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface Pond_FeedingRepository extends JpaRepository<Pond_Feeding, Integer> {
-
+    List<Pond_Feeding> findByPondsId(int id);
 }
