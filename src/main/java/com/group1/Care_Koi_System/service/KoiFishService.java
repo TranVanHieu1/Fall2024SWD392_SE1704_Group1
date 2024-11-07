@@ -540,4 +540,53 @@ public class KoiFishService {
         }
     }
 
+    public ResponseEntity<?> getKoiFishUnHealthy() {
+        try {
+
+            Account account = accountUtils.getCurrentAccount();
+            if (account == null) {
+                throw new SystemException(ErrorCode.NOT_LOGIN);
+            }
+
+            List<Ponds> pondsList = pondRepository.findByAccount(account).stream()
+                    .filter(ponds -> !ponds.isDeleted()).toList();
+            if (pondsList == null) {
+                throw new SystemException(ErrorCode.EMPTY);
+            }
+            List<KoiFishResponse> fishs = new ArrayList<>();
+            for (Ponds pond : pondsList) {
+                List<Pond_KoiFish> pondKoiFish = pond.getKoiFishList();
+                for (Pond_KoiFish pond_koiFish : pondKoiFish) {
+                    KoiFish fish = pond_koiFish.getKoiFish();
+                    if(!fish.isDeleted() && fish.getHealthyStatus().equals(HealthyStatus.SICK)){
+                        Pond_KoiFish pondKoi = pond_koiFishRepository.findPondsByKoiFishId(fish.getId());
+                        fishs.add(new KoiFishResponse(
+                                fish.getId(),
+                                fish.getFishName(),
+                                fish.getImageFish(),
+                                fish.getBirthDay(),
+                                fish.getSpecies(),
+                                fish.getSize(),
+                                fish.getWeigh(),
+                                fish.getGender(),
+                                fish.getOrigin(),
+                                fish.getHealthyStatus(),
+                                fish.getNote(),
+                                pondKoi.getPonds().getId()
+                        ));
+                    }
+                }
+            }
+            if (fishs.isEmpty()) {
+                throw new SystemException(ErrorCode.EMPTY);
+            }
+
+            return new ResponseEntity<>(fishs, HttpStatus.OK);
+        } catch (SystemException ex) {
+            ErrorCode errorCode = ex.getErrorCode();
+            ResponseException respon = new ResponseException(ex.getMessage());
+            return new ResponseEntity<>(respon, errorCode.getHttpStatus());
+        }
+    }
+
 }
